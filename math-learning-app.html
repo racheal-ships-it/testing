@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Fun - Multiplication & Division</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 30px;
+        }
+
+        .mode-selection {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .mode-btn {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .mode-btn.multiplication {
+            background: #48bb78;
+            color: white;
+        }
+
+        .mode-btn.division {
+            background: #ed8936;
+            color: white;
+        }
+
+        .mode-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .mode-btn.active {
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.5);
+        }
+
+        .score-board {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f7fafc;
+            border-radius: 10px;
+        }
+
+        .score-item {
+            text-align: center;
+        }
+
+        .score-label {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .score-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .question-area {
+            margin: 30px 0;
+            padding: 30px;
+            background: #edf2f7;
+            border-radius: 15px;
+        }
+
+        .question {
+            font-size: 3em;
+            color: #2d3748;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .answer-input {
+            font-size: 2em;
+            padding: 15px;
+            border: 3px solid #cbd5e0;
+            border-radius: 10px;
+            width: 200px;
+            text-align: center;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .answer-input:focus {
+            border-color: #667eea;
+        }
+
+        .submit-btn {
+            margin-top: 20px;
+            padding: 15px 40px;
+            font-size: 1.3em;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .submit-btn:hover {
+            background: #5a67d8;
+            transform: scale(1.05);
+        }
+
+        .submit-btn:active {
+            transform: scale(0.95);
+        }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 1.3em;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .feedback.show {
+            opacity: 1;
+        }
+
+        .feedback.correct {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .feedback.incorrect {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .new-problem-btn {
+            margin-top: 15px;
+            padding: 12px 30px;
+            font-size: 1.1em;
+            background: #48bb78;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: none;
+        }
+
+        .new-problem-btn:hover {
+            background: #38a169;
+            transform: scale(1.05);
+        }
+
+        .encouragement {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .celebrate {
+            animation: bounce 0.5s ease-in-out 2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Math Fun! 🎯</h1>
+        <p class="subtitle">Practice your multiplication and division skills!</p>
+
+        <div class="mode-selection">
+            <button class="mode-btn multiplication active" onclick="setMode('multiplication')">
+                ✖️ Multiplication
+            </button>
+            <button class="mode-btn division" onclick="setMode('division')">
+                ➗ Division
+            </button>
+        </div>
+
+        <div class="score-board">
+            <div class="score-item">
+                <div class="score-label">Correct</div>
+                <div class="score-value" id="correct">0</div>
+            </div>
+            <div class="score-item">
+                <div class="score-label">Total</div>
+                <div class="score-value" id="total">0</div>
+            </div>
+            <div class="score-item">
+                <div class="score-label">Streak</div>
+                <div class="score-value" id="streak">0</div>
+            </div>
+        </div>
+
+        <div class="question-area">
+            <div class="question" id="question">12 × 7 = ?</div>
+            <input type="number" class="answer-input" id="answer" placeholder="?" autocomplete="off">
+            <br>
+            <button class="submit-btn" onclick="checkAnswer()">Check Answer ✓</button>
+            <button class="new-problem-btn" id="newProblemBtn" onclick="newProblem()">Next Problem →</button>
+        </div>
+
+        <div class="feedback" id="feedback"></div>
+        <div class="encouragement" id="encouragement"></div>
+    </div>
+
+    <script>
+        let mode = 'multiplication';
+        let currentProblem = {};
+        let stats = {
+            correct: 0,
+            total: 0,
+            streak: 0
+        };
+
+        const encouragements = {
+            correct: [
+                "🌟 Amazing!",
+                "🎉 Fantastic!",
+                "💪 You're doing great!",
+                "🚀 Superb!",
+                "⭐ Excellent!",
+                "🎊 Perfect!",
+                "👏 Well done!",
+                "🏆 Outstanding!"
+            ],
+            incorrect: [
+                "💭 Try again!",
+                "🤔 Almost there!",
+                "📚 Keep practicing!",
+                "💡 You can do it!",
+                "🌈 Don't give up!"
+            ],
+            streak: [
+                "🔥 You're on fire!",
+                "⚡ Unstoppable!",
+                "🌟 Keep it up!",
+                "💫 Streak master!"
+            ]
+        };
+
+        function setMode(newMode) {
+            mode = newMode;
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            newProblem();
+        }
+
+        function generateProblem() {
+            const num1 = Math.floor(Math.random() * 12) + 1;
+            const num2 = Math.floor(Math.random() * 12) + 1;
+
+            if (mode === 'multiplication') {
+                currentProblem = {
+                    num1: num1,
+                    num2: num2,
+                    answer: num1 * num2,
+                    display: `${num1} × ${num2} = ?`
+                };
+            } else {
+                const product = num1 * num2;
+                currentProblem = {
+                    num1: product,
+                    num2: num1,
+                    answer: num2,
+                    display: `${product} ÷ ${num1} = ?`
+                };
+            }
+
+            document.getElementById('question').textContent = currentProblem.display;
+            document.getElementById('answer').value = '';
+            document.getElementById('answer').focus();
+            document.getElementById('feedback').classList.remove('show');
+            document.getElementById('newProblemBtn').style.display = 'none';
+            document.getElementById('encouragement').textContent = '';
+        }
+
+        function checkAnswer() {
+            const userAnswer = parseInt(document.getElementById('answer').value);
+            const feedbackEl = document.getElementById('feedback');
+            const encouragementEl = document.getElementById('encouragement');
+            const submitBtn = document.querySelector('.submit-btn');
+
+            if (isNaN(userAnswer)) {
+                feedbackEl.textContent = '⚠️ Please enter a number!';
+                feedbackEl.className = 'feedback incorrect show';
+                return;
+            }
+
+            stats.total++;
+            document.getElementById('total').textContent = stats.total;
+
+            if (userAnswer === currentProblem.answer) {
+                stats.correct++;
+                stats.streak++;
+                feedbackEl.textContent = `✅ Correct! ${currentProblem.display.replace('?', currentProblem.answer)}`;
+                feedbackEl.className = 'feedback correct show';
+
+                const randomEncouragement = encouragements.correct[Math.floor(Math.random() * encouragements.correct.length)];
+                encouragementEl.textContent = randomEncouragement;
+
+                if (stats.streak >= 3) {
+                    const streakMsg = encouragements.streak[Math.floor(Math.random() * encouragements.streak.length)];
+                    encouragementEl.textContent += ' ' + streakMsg;
+                }
+
+                document.querySelector('.container').classList.add('celebrate');
+                setTimeout(() => {
+                    document.querySelector('.container').classList.remove('celebrate');
+                }, 1000);
+            } else {
+                stats.streak = 0;
+                feedbackEl.textContent = `❌ Not quite. The answer is ${currentProblem.answer}`;
+                feedbackEl.className = 'feedback incorrect show';
+
+                const randomEncouragement = encouragements.incorrect[Math.floor(Math.random() * encouragements.incorrect.length)];
+                encouragementEl.textContent = randomEncouragement;
+            }
+
+            document.getElementById('correct').textContent = stats.correct;
+            document.getElementById('streak').textContent = stats.streak;
+            document.getElementById('newProblemBtn').style.display = 'inline-block';
+        }
+
+        function newProblem() {
+            generateProblem();
+        }
+
+        // Allow Enter key to submit answer
+        document.getElementById('answer').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                if (document.getElementById('newProblemBtn').style.display === 'none') {
+                    checkAnswer();
+                } else {
+                    newProblem();
+                }
+            }
+        });
+
+        // Initialize with a problem
+        generateProblem();
+    </script>
+</body>
+</html>
