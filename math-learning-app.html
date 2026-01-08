@@ -213,11 +213,134 @@
         .celebrate {
             animation: bounce 0.5s ease-in-out 2;
         }
+
+        /* Welcome Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .modal-content h2 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        .modal-content p {
+            color: #666;
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+
+        .name-input {
+            font-size: 1.5em;
+            padding: 15px;
+            border: 3px solid #cbd5e0;
+            border-radius: 10px;
+            width: 100%;
+            text-align: center;
+            outline: none;
+            transition: border-color 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .name-input:focus {
+            border-color: #667eea;
+        }
+
+        .start-btn {
+            padding: 15px 40px;
+            font-size: 1.3em;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .start-btn:hover {
+            background: #5a67d8;
+            transform: scale(1.05);
+        }
+
+        .start-btn:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .user-greeting {
+            color: #667eea;
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .session-info {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 20px;
+            padding: 10px;
+            background: #f7fafc;
+            border-radius: 8px;
+        }
+
+        .change-name-btn {
+            margin-left: 10px;
+            padding: 5px 15px;
+            font-size: 0.8em;
+            background: #ed8936;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .change-name-btn:hover {
+            background: #dd6b20;
+        }
     </style>
 </head>
 <body>
+    <!-- Welcome Modal -->
+    <div id="welcomeModal" class="modal-overlay">
+        <div class="modal-content">
+            <h2>👋 Welcome to Math Fun!</h2>
+            <p>What's your name?</p>
+            <input type="text" id="nameInput" class="name-input" placeholder="Enter your name" autocomplete="off" maxlength="30">
+            <br>
+            <button id="startBtn" class="start-btn" onclick="startSession()">Let's Practice! 🚀</button>
+        </div>
+    </div>
+
     <div class="container">
         <h1>🎯 Math Fun! 🎯</h1>
+        <div class="user-greeting" id="userGreeting"></div>
         <p class="subtitle">Practice your multiplication and division skills!</p>
 
         <div class="mode-selection">
@@ -254,6 +377,11 @@
 
         <div class="feedback" id="feedback"></div>
         <div class="encouragement" id="encouragement"></div>
+
+        <div class="session-info" id="sessionInfo">
+            Session active
+            <button class="change-name-btn" onclick="changeName()">Change Name</button>
+        </div>
     </div>
 
     <script>
@@ -264,32 +392,111 @@
             total: 0,
             streak: 0
         };
+        let userName = '';
+        let sessionStartTime = null;
 
         const encouragements = {
             correct: [
-                "🌟 Amazing!",
-                "🎉 Fantastic!",
-                "💪 You're doing great!",
-                "🚀 Superb!",
-                "⭐ Excellent!",
-                "🎊 Perfect!",
-                "👏 Well done!",
-                "🏆 Outstanding!"
+                "Amazing, {name}!",
+                "Fantastic work, {name}!",
+                "You're doing great, {name}!",
+                "Superb, {name}!",
+                "Excellent, {name}!",
+                "Perfect, {name}!",
+                "Well done, {name}!",
+                "Outstanding, {name}!"
             ],
             incorrect: [
-                "💭 Try again!",
-                "🤔 Almost there!",
-                "📚 Keep practicing!",
-                "💡 You can do it!",
-                "🌈 Don't give up!"
+                "Try again, {name}!",
+                "Almost there, {name}!",
+                "Keep practicing, {name}!",
+                "You can do it, {name}!",
+                "Don't give up, {name}!"
             ],
             streak: [
-                "🔥 You're on fire!",
-                "⚡ Unstoppable!",
-                "🌟 Keep it up!",
-                "💫 Streak master!"
+                "{name}, you're on fire!",
+                "{name}, you're unstoppable!",
+                "Keep it up, {name}!",
+                "{name}, you're a streak master!"
             ]
         };
+
+        // Session management functions
+        function startSession() {
+            const nameInput = document.getElementById('nameInput').value.trim();
+
+            if (nameInput === '') {
+                alert('Please enter your name to start!');
+                return;
+            }
+
+            userName = nameInput;
+            sessionStorage.setItem('userName', userName);
+            sessionStorage.setItem('sessionStartTime', new Date().toISOString());
+            sessionStartTime = new Date();
+
+            // Hide modal and show greeting
+            document.getElementById('welcomeModal').classList.add('hidden');
+            updateGreeting();
+            updateSessionInfo();
+            generateProblem();
+        }
+
+        function updateGreeting() {
+            const greetingEl = document.getElementById('userGreeting');
+            const hour = new Date().getHours();
+            let timeGreeting = '';
+
+            if (hour < 12) {
+                timeGreeting = 'Good morning';
+            } else if (hour < 18) {
+                timeGreeting = 'Good afternoon';
+            } else {
+                timeGreeting = 'Good evening';
+            }
+
+            greetingEl.textContent = `${timeGreeting}, ${userName}! 👋`;
+        }
+
+        function updateSessionInfo() {
+            const sessionInfoEl = document.getElementById('sessionInfo');
+            const sessionDuration = Math.floor((new Date() - sessionStartTime) / 1000 / 60);
+            const accuracy = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
+
+            sessionInfoEl.innerHTML = `
+                Session: ${sessionDuration} min | Accuracy: ${accuracy}% | Problems: ${stats.total}
+                <button class="change-name-btn" onclick="changeName()">Change Name</button>
+            `;
+        }
+
+        function changeName() {
+            if (confirm('Are you sure you want to change your name? This will start a new session.')) {
+                sessionStorage.clear();
+                location.reload();
+            }
+        }
+
+        function checkSession() {
+            const storedName = sessionStorage.getItem('userName');
+            const storedStartTime = sessionStorage.getItem('sessionStartTime');
+
+            if (storedName) {
+                // Resume existing session
+                userName = storedName;
+                sessionStartTime = new Date(storedStartTime);
+                document.getElementById('welcomeModal').classList.add('hidden');
+                updateGreeting();
+                updateSessionInfo();
+                generateProblem();
+            } else {
+                // Show welcome modal
+                document.getElementById('nameInput').focus();
+            }
+        }
+
+        function personalizeMessage(message) {
+            return message.replace('{name}', userName);
+        }
 
         function setMode(newMode) {
             mode = newMode;
@@ -351,11 +558,11 @@
                 feedbackEl.className = 'feedback correct show';
 
                 const randomEncouragement = encouragements.correct[Math.floor(Math.random() * encouragements.correct.length)];
-                encouragementEl.textContent = randomEncouragement;
+                encouragementEl.textContent = '🌟 ' + personalizeMessage(randomEncouragement);
 
                 if (stats.streak >= 3) {
                     const streakMsg = encouragements.streak[Math.floor(Math.random() * encouragements.streak.length)];
-                    encouragementEl.textContent += ' ' + streakMsg;
+                    encouragementEl.textContent += ' ' + personalizeMessage(streakMsg);
                 }
 
                 document.querySelector('.container').classList.add('celebrate');
@@ -368,12 +575,13 @@
                 feedbackEl.className = 'feedback incorrect show';
 
                 const randomEncouragement = encouragements.incorrect[Math.floor(Math.random() * encouragements.incorrect.length)];
-                encouragementEl.textContent = randomEncouragement;
+                encouragementEl.textContent = '💭 ' + personalizeMessage(randomEncouragement);
             }
 
             document.getElementById('correct').textContent = stats.correct;
             document.getElementById('streak').textContent = stats.streak;
             document.getElementById('newProblemBtn').style.display = 'inline-block';
+            updateSessionInfo();
         }
 
         function newProblem() {
@@ -391,8 +599,17 @@
             }
         });
 
-        // Initialize with a problem
-        generateProblem();
+        // Allow Enter key in name input
+        document.getElementById('nameInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                startSession();
+            }
+        });
+
+        // Check for existing session on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            checkSession();
+        });
     </script>
 </body>
 </html>
