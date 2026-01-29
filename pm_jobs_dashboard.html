@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>PM Job Search Dashboard</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0f0f13;color:#e0e0e0;min-height:100vh}
+.hero{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);padding:3rem 2rem;text-align:center;border-bottom:1px solid rgba(255,255,255,.05)}
+.hero h1{font-size:2.4rem;font-weight:700;background:linear-gradient(135deg,#667eea,#764ba2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:.5rem}
+.hero p{color:#8892b0;font-size:1.1rem;max-width:600px;margin:0 auto}
+.hero .date{margin-top:1rem;color:#5a6380;font-size:.85rem}
+.stats{display:flex;justify-content:center;gap:2rem;padding:1.5rem;background:#13131a;border-bottom:1px solid rgba(255,255,255,.05);flex-wrap:wrap}
+.stat-n{font-size:2rem;font-weight:700;color:#667eea}.stat-l{font-size:.8rem;color:#5a6380;text-transform:uppercase;letter-spacing:1px}
+.container{max-width:1200px;margin:0 auto;padding:2rem}
+.section-title{font-size:1.3rem;font-weight:600;margin:2rem 0 1rem;color:#c5c5d5}
+.filters{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.5rem}
+.filter-btn{padding:.5rem 1rem;border:1px solid rgba(102,126,234,.3);border-radius:20px;background:transparent;color:#8892b0;cursor:pointer;font-size:.85rem;transition:all .2s}
+.filter-btn:hover,.filter-btn.active{background:rgba(102,126,234,.15);border-color:#667eea;color:#667eea}
+.jobs-grid{display:grid;gap:.75rem}
+.job-card{display:block;background:#1a1a24;border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:1.25rem 1.5rem;transition:all .2s;cursor:pointer;text-decoration:none;color:inherit}
+.job-card:hover{border-color:rgba(102,126,234,.4);transform:translateY(-1px);box-shadow:0 4px 20px rgba(0,0,0,.3)}
+.job-card.hidden{display:none}
+.job-card-header{display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem;flex-wrap:wrap}
+.company-emoji{font-size:1.2rem}.company-name{font-weight:600;color:#8892b0;font-size:.9rem}
+.badge{padding:.15rem .6rem;border-radius:12px;font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.badge-ts{background:rgba(255,107,107,.15);color:#ff6b6b;border:1px solid rgba(255,107,107,.3)}
+.badge-pm{background:rgba(102,126,234,.15);color:#667eea;border:1px solid rgba(102,126,234,.3)}
+.badge-level{background:rgba(81,207,102,.15);color:#51cf66;border:1px solid rgba(81,207,102,.3)}
+.score{margin-left:auto;font-weight:700;font-size:.85rem}
+.score-high{color:#51cf66}.score-med{color:#ffd43b}.score-low{color:#868e96}
+.job-title{font-size:1.1rem;font-weight:600;color:#e0e0e0;margin-bottom:.4rem}
+.job-meta{display:flex;gap:1rem;font-size:.8rem;color:#5a6380}
+.career-links{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:2rem}
+.career-link{padding:.5rem 1rem;background:rgba(102,126,234,.1);border:1px solid rgba(102,126,234,.2);border-radius:8px;color:#667eea;text-decoration:none;font-size:.85rem;transition:all .2s}
+.career-link:hover{background:rgba(102,126,234,.2);border-color:#667eea}
+.log-container{background:#12121a;border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:1.5rem;max-height:300px;overflow-y:auto;margin-top:1rem}
+.log-line{font-family:'SF Mono','Fira Code',monospace;font-size:.8rem;color:#5a6380;padding:.2rem 0}
+details{margin-top:2rem}summary{cursor:pointer;color:#8892b0;font-size:.9rem;padding:.5rem 0}
+.no-results{text-align:center;padding:3rem;color:#5a6380}
+.tip{margin-top:2rem;padding:1.5rem;background:rgba(102,126,234,.08);border:1px solid rgba(102,126,234,.2);border-radius:12px}
+.tip h3{color:#667eea;margin-bottom:.5rem;font-size:1rem}.tip p,.tip li{color:#8892b0;font-size:.9rem;line-height:1.6}
+.tip ul{margin-left:1.5rem;margin-top:.5rem}
+@media(max-width:768px){.hero h1{font-size:1.6rem}.stats{gap:1rem}.container{padding:1rem}}
+</style></head><body>
+<div class="hero">
+  <h1>PM Job Search Dashboard</h1>
+  <p>Lead / Staff / Director / Principal Product Management roles at top tech companies</p>
+  <p class="date">Last searched: January 29, 2026 at 08:17 PM</p>
+</div>
+<div class="stats">
+  <div><div class="stat-n">30</div><div class="stat-l">Total Matches</div></div>
+  <div><div class="stat-n">11</div><div class="stat-l">Trust &amp; Safety</div></div>
+  <div><div class="stat-n">14</div><div class="stat-l">Senior Level</div></div>
+  <div><div class="stat-n">22</div><div class="stat-l">Top Matches (70%+)</div></div>
+  <div><div class="stat-n">12</div><div class="stat-l">Companies</div></div>
+</div>
+<div class="container">
+  <h2 class="section-title">🔗 Career Pages (Direct Links)</h2>
+  <div class="career-links"><a href="https://block.xyz/careers/jobs" target="_blank" class="career-link">💰 Block (Cash App)</a>
+<a href="https://careers.airbnb.com/positions/" target="_blank" class="career-link">🏠 Airbnb</a>
+<a href="https://www.coinbase.com/careers/positions" target="_blank" class="career-link">🪙 Coinbase</a>
+<a href="https://www.zillow.com/careers/" target="_blank" class="career-link">🏡 Zillow</a>
+<a href="https://www.pinterestcareers.com/en/jobs/" target="_blank" class="career-link">📌 Pinterest</a>
+<a href="https://www.redditinc.com/careers" target="_blank" class="career-link">🤖 Reddit</a>
+<a href="https://ouraring.com/careers" target="_blank" class="career-link">💍 Oura</a>
+<a href="https://openai.com/careers/search/" target="_blank" class="career-link">🧠 OpenAI</a>
+<a href="https://www.anthropic.com/jobs" target="_blank" class="career-link">🔬 Anthropic</a>
+<a href="https://www.anduril.com/open-roles" target="_blank" class="career-link">🛡️ Anduril</a></div>
+
+  <h2 class="section-title">🔍 Filter Results</h2>
+  <div class="filters">
+    <button class="filter-btn active" onclick="showAll(this)">All (30)</button>
+    <button class="filter-btn" onclick="filterTS(this)">🛡️ Trust &amp; Safety (11)</button>
+    <button class="filter-btn" onclick="filterSr(this)">⭐ Senior Level (14)</button>
+    <button class="filter-btn" data-filter-company="Airbnb" onclick="filterCompany(this)">🏠 Airbnb</button>
+<button class="filter-btn" data-filter-company="Anthropic" onclick="filterCompany(this)">🔬 Anthropic</button>
+<button class="filter-btn" data-filter-company="Apple" onclick="filterCompany(this)">🏢 Apple</button>
+<button class="filter-btn" data-filter-company="Block (Cash App)" onclick="filterCompany(this)">💰 Block (Cash App)</button>
+<button class="filter-btn" data-filter-company="Coinbase" onclick="filterCompany(this)">🪙 Coinbase</button>
+<button class="filter-btn" data-filter-company="DoorDash" onclick="filterCompany(this)">🏢 DoorDash</button>
+<button class="filter-btn" data-filter-company="OpenAI" onclick="filterCompany(this)">🧠 OpenAI</button>
+<button class="filter-btn" data-filter-company="Oura" onclick="filterCompany(this)">💍 Oura</button>
+<button class="filter-btn" data-filter-company="Pinterest" onclick="filterCompany(this)">📌 Pinterest</button>
+<button class="filter-btn" data-filter-company="Reddit" onclick="filterCompany(this)">🤖 Reddit</button>
+<button class="filter-btn" data-filter-company="TikTok" onclick="filterCompany(this)">🏢 TikTok</button>
+<button class="filter-btn" data-filter-company="Zillow" onclick="filterCompany(this)">🏡 Zillow</button>
+  </div>
+
+  <div class="jobs-grid" id="grid"><a href="https://www.pinterestcareers.com/en/jobs/" target="_blank" class="job-card" data-company="Pinterest" data-ts="true" data-senior="true">
+  <div class="job-card-header">
+    <span class="company-emoji">📌</span>
+    <span class="company-name">Pinterest</span>
+    <span class="badge badge-ts">Trust &amp; Safety</span><span class="badge badge-level">Director</span>
+    <span class="score score-high">100%</span>
+  </div>
+  <h3 class="job-title">Sr. Director, Product Policy - Trust & Safety</h3>
+  <div class="job-meta"><span>📍 San Francisco, CA</span><span>via careers page</span></div>
+</a>
+<a href="https://www.pinterestcareers.com/jobs/7350253/staff-product-manager-wellbeing/" target="_blank" class="job-card" data-company="Pinterest" data-ts="true" data-senior="true">
+  <div class="job-card-header">
+    <span class="company-emoji">📌</span>
+    <span class="company-name">Pinterest</span>
+    <span class="badge badge-ts">Trust &amp; Safety</span><span class="badge badge-level">Staff</span>
+    <span class="score score-high">100%</span>
+  </div>
+  <h3 class="job-title">Staff Product Manager, Wellbeing</h3>
+  <div class="job-meta"><span>📍 Chicago, IL / San Francisco, CA</span><span>via careers page</span></div>
+</a>
+<a href="https://ouraring.com/careers" target="_blank" class="job-card" data-company="Oura" data-ts="true" data-senior="true">
+  <div class="job-card-header">
+    <span class="company-emoji">💍</span>
+    <span class="company-name">Oura</span>
+    <span class="badge badge-ts">Trust &amp; Safety</span><span class="badge badge-level">Staff</span>
+    <span class="score score-high">100%</span>
+  </div>
+  <h3 class="job-title">Staff Product Manager, Health Risk Detection</h3>
+  <div class="job-meta"><span>📍 San Francisco / San Diego / Los Angeles / Remote (US)</span><span>via careers page</span></div>
+</a>
+<a href="https://careers.airbnb.com/positions/" target="_blank" class="job-card" data-company="Airbnb" data-ts="true" data-senior="false">
+  <div class="job-card-header">
+    <span class="company-emoji">🏠</span>
+    <span class="company-name">Airbnb</span>
+    <span class="badge badge-ts">Trust &amp; Safety</span>
+    <span class="score score-high">75%</span>
+  </div>
+  <h3 class="job-title">Platform Product Manager, Trust & Safety</h3>
+  <div class="job-meta"><span>📍 United States (Remote)</span><span>via careers page</span></div>
+</a>
+<a href="https://www.anthropic.com/jobs" target="_blank" class="job-card" data-company="Anthropic" data-ts="true" data-senior="false">
+  <div class="job-card-header">
+    <span class="company-emoji">🔬</span>
+    <span class="company-name">Anthropic</span>
+    <span class="badge badge-ts">Trust &amp; Safety</span>
+    <span class="score score-high">75%</span>
+  </div>
+  <h3 class="job-title">Product Manager, Safeguards</h3>
+  <div class="job-meta"><span>📍 San Francisco, CA</span><span>via careers page</span></div>
+</a>
+<a href="https://openai.com/careers/product-manager-model-behavior-san-francisco/" target="_blank" class="job-card" data-company="OpenAI" data-ts="true" data-senior="false">
+  <div class="job-card-header">
+    <span class="company-emoji">🧠</span>
+    <span class="company-name">OpenAI</span>
+    <span class="badge badge-ts">Trust &amp; Safety</span>
+    <span class="score score-high">75%</span>
+  </div>
+  <h3 class="job-title">Product Manager, Model Behavior</h3>
+  <div class="job-meta"><span>📍 San Francisco, CA</span><span>via careers page</span></div>
+</a>
+<a href="https://block.xyz/careers/jobs" target="_blank" class="job-card" data-company="Block (Cash App)" data-ts="true" data-senior="false">
+  <div class="job-card-header">
+    <span class="company-emoji">💰</span>
+    <span class="company-name">Block (Cash App)</span>
+    <span class="badge badge-ts">Trust &amp; Safety</span>
+    <span class="score score-high">75%</span>
+  </div>
+  <h3 class="job-title">Product Manager, Dispute Resolution & Scams</h3>
+  <div class="job-meta"><span>📍 Remote (US)</span><span>via careers page</span></div>
+</a>
+<a href="https://www.coinbase.com/careers/positions/6951278" target="_blank" class="job-card" data-company="Coinbase" data-ts="true" data-senior="false">
+  <div class="job-card-header">
+    <span class="company-emoji">🪙</span>
+    <span class="company-name">Coinbase</span>
+    <span class="badge badge-ts">Trust &amp; Safety</span>
+    <span class="score score-high">75%</span>
+  </div>
+  <h3 class="job-title">Senior Product Manager, Identity & Access</h3>
+  <div class="job-meta"><span>📍 Remote (USA)</span><span>via careers page</span></div>
+</a>
+<a href="https://careersatdoordash.com/jobs/senior-product-manager-trust-safety-integrity-and-fraud/7071290/" target="_blank" class="job-card" data-company="DoorDash" data-ts="true" data-senior="false">
+  <div class="job-card-header">
+    <span class="company-emoji">🏢</span>
+    <span class="company-name">DoorDash</span>
+    <span class="badge badge-ts">Trust &amp; Safety</span>
+    <span class="score score-high">75%</span>
+  </div>
+  <h3 class="job-title">Senior Product Manager, Trust & Safety, Integrity & Fraud</h3>
+  <div class="job-meta"><span>📍 United States</span><span>via careers page</span></div>
+</a>
+<a href="https://jobs.apple.com/en-us/details/200613587/trust-safety-user-reporting-product-manager" target="_blank" class="job-card" data-company="Apple" data-ts="true" data-senior="false">
+  <div class="job-card-header">
+    <span class="company-emoji">🏢</span>
+    <span class="company-name">Apple</span>
+    <span class="badge badge-ts">Trust &amp; Safety</span>
+    <span class="score score-high">75%</span>
+  </div>
+  <h3 class="job-title">Trust & Safety User Reporting Product Manager</h3>
+  <div class="job-meta"><span>📍 United States</span><span>via careers page</span></div>
+</a>
+<a href="https://careers.tiktok.com/" target="_blank" class="job-card" data-company="TikTok" data-ts="true" data-senior="false">
+  <div class="job-card-header">
+    <span class="company-emoji">🏢</span>
+    <span class="company-name">TikTok</span>
+    <span class="badge badge-ts">Trust &amp; Safety</span>
+    <span class="score score-high">75%</span>
+  </div>
+  <h3 class="job-title">Product Manager, Trust & Safety (USDS)</h3>
+  <div class="job-meta"><span>📍 United States</span><span>via careers page</span></div>
+</a>
+<a href="https://job-boards.greenhouse.io/anthropic/jobs/4684257008" target="_blank" class="job-card" data-company="Anthropic" data-ts="false" data-senior="true">
+  <div class="job-card-header">
+    <span class="company-emoji">🔬</span>
+    <span class="company-name">Anthropic</span>
+    <span class="badge badge-pm">Product</span><span class="badge badge-level">Lead</span>
+    <span class="score score-high">70%</span>
+  </div>
+  <h3 class="job-title">Lead Product Manager, Research</h3>
+  <div class="job-meta"><span>📍 San Francisco, CA</span><span>via greenhouse</span></div>
+</a>
+<a href="https://job-boards.greenhouse.io/reddit/jobs/6762983" target="_blank" class="job-card" data-company="Reddit" data-ts="false" data-senior="true">
+  <div class="job-card-header">
+    <span class="company-emoji">🤖</span>
+    <span class="company-name">Reddit</span>
+    <span class="badge badge-pm">Product</span><span class="badge badge-level">Principal</span>
+    <span class="score score-high">70%</span>
+  </div>
+  <h3 class="job-title">Principal Product Manager, Ads Manager (Monetization)</h3>
+  <div class="job-meta"><span>📍 Remote (US)</span><span>via greenhouse</span></div>
+</a>
+<a href="https://job-boards.greenhouse.io/reddit/jobs/6721235" target="_blank" class="job-card" data-company="Reddit" data-ts="false" data-senior="true">
+  <div class="job-card-header">
+    <span class="company-emoji">🤖</span>
+    <span class="company-name">Reddit</span>
+    <span class="badge badge-pm">Product</span><span class="badge badge-level">Staff</span>
+    <span class="score score-high">70%</span>
+  </div>
+  <h3 class="job-title">Staff Product Manager, Reddit Answers</h3>
+  <div class="job-meta"><span>📍 Remote (US)</span><span>via greenhouse</span></div>
+</a>
+<a href="https://boards.greenhouse.io/reddit/jobs/4865277" target="_blank" class="job-card" data-company="Reddit" data-ts="false" data-senior="true">
+  <div class="job-card-header">
+    <span class="company-emoji">🤖</span>
+    <span class="company-name">Reddit</span>
+    <span class="badge badge-pm">Product</span><span class="badge badge-level">Principal</span>
+    <span class="score score-high">70%</span>
+  </div>
+  <h3 class="job-title">Principal Product Manager, Emerging Markets</h3>
+  <div class="job-meta"><span>📍 Remote (US)</span><span>via greenhouse</span></div>
+</a>
+<a href="https://www.redditinc.com/careers" target="_blank" class="job-card" data-company="Reddit" data-ts="false" data-senior="true">
+  <div class="job-card-header">
+    <span class="company-emoji">🤖</span>
+    <span class="company-name">Reddit</span>
+    <span class="badge badge-pm">Product</span><span class="badge badge-level">Staff</span>
+    <span class="score score-high">70%</span>
+  </div>
+  <h3 class="job-title">Staff Product Manager, Reddit Profiles</h3>
+  <div class="job-meta"><span>📍 Remote (US)</span><span>via careers page</span></div>
+</a>
+<a href="https://www.pinterestcareers.com/jobs/7438083/staff-product-manager-personalized-experiences/" target="_blank" class="job-card" data-company="Pinterest" data-ts="false" data-senior="true">
+  <div class="job-card-header">
+    <span class="company-emoji">📌</span>
+    <span class="company-name">Pinterest</span>
+    <span class="badge badge-pm">Product</span><span class="badge badge-level">Staff</span>
+    <span class="score score-high">70%</span>
+  </div>
+  <h3 class="job-title">Staff Product Manager, Personalized Experiences</h3>
+  <div class="job-meta"><span>📍 San Francisco, CA</span><span>via careers page</span></div>
+</a>
+<a href="https://www.pinterestcareers.com/jobs/7169624/staff-product-manager-trends-insights/" target="_blank" class="job-card" data-company="Pinterest" data-ts="false" data-senior="true">
+  <div class="job-card-header">
+    <span class="company-emoji">📌</span>
+    <span class="company-name">Pinterest</span>
+    <span class="badge badge-pm">Product</span><span class="badge badge-level">Staff</span>
+    <span class="score score-high">70%</span>
+  </div>
+  <h3 class="job-title">Staff Product Manager, Trends & Insights</h3>
+  <div class="job-meta"><span>📍 San Francisco, CA</span><span>via careers page</span></div>
+</a>
+<a href="https://www.pinterestcareers.com/jobs/6576120/staff-product-manager-aiml-personalization/" target="_blank" class="job-card" data-company="Pinterest" data-ts="false" data-senior="true">
+  <div class="job-card-header">
+    <span class="company-emoji">📌</span>
+    <span class="company-name">Pinterest</span>
+    <span class="badge badge-pm">Product</span><span class="badge badge-level">Staff</span>
+    <span class="score score-high">70%</span>
+  </div>
+  <h3 class="job-title">Staff Product Manager, AI/ML Personalization</h3>
+  <div class="job-meta"><span>📍 San Francisco, CA</span><span>via careers page</span></div>
+</a>
+<a href="https://www.pinterestcareers.com/jobs/7225068/corporate-strategy-lead-product/" target="_blank" class="job-card" data-company="Pinterest" data-ts="false" data-senior="true">
+  <div class="job-card-header">
+    <span class="company-emoji">📌</span>
+    <span class="company-name">Pinterest</span>
+    <span class="badge badge-pm">Product</span><span class="badge badge-level">Lead</span>
+    <span class="score score-high">70%</span>
+  </div>
+  <h3 class="job-title">Corporate Strategy Lead - Product</h3>
+  <div class="job-meta"><span>📍 New York, NY / San Francisco, CA</span><span>via careers page</span></div>
+</a>
+<a href="https://www.coinbase.com/careers/positions/6730364" target="_blank" class="job-card" data-company="Coinbase" data-ts="false" data-senior="true">
+  <div class="job-card-header">
+    <span class="company-emoji">🪙</span>
+    <span class="company-name">Coinbase</span>
+    <span class="badge badge-pm">Product</span><span class="badge badge-level">Group</span>
+    <span class="score score-high">70%</span>
+  </div>
+  <h3 class="job-title">Group Product Manager, Support Automation</h3>
+  <div class="job-meta"><span>📍 Remote (USA)</span><span>via careers page</span></div>
+</a>
+<a href="https://www.zillow.com/careers/" target="_blank" class="job-card" data-company="Zillow" data-ts="false" data-senior="true">
+  <div class="job-card-header">
+    <span class="company-emoji">🏡</span>
+    <span class="company-name">Zillow</span>
+    <span class="badge badge-pm">Product</span><span class="badge badge-level">Principal</span>
+    <span class="score score-high">70%</span>
+  </div>
+  <h3 class="job-title">Principal Product Manager (Follow Up Boss)</h3>
+  <div class="job-meta"><span>📍 Remote (US)</span><span>via careers page</span></div>
+</a>
+<a href="https://www.coinbase.com/careers/positions/6563927" target="_blank" class="job-card" data-company="Coinbase" data-ts="false" data-senior="false">
+  <div class="job-card-header">
+    <span class="company-emoji">🪙</span>
+    <span class="company-name">Coinbase</span>
+    <span class="badge badge-pm">Product</span>
+    <span class="score score-med">45%</span>
+  </div>
+  <h3 class="job-title">Senior Product Manager, Consumer Trading (Advanced)</h3>
+  <div class="job-meta"><span>📍 Remote (USA)</span><span>via careers page</span></div>
+</a>
+<a href="https://www.coinbase.com/careers/positions/7371119" target="_blank" class="job-card" data-company="Coinbase" data-ts="false" data-senior="false">
+  <div class="job-card-header">
+    <span class="company-emoji">🪙</span>
+    <span class="company-name">Coinbase</span>
+    <span class="badge badge-pm">Product</span>
+    <span class="score score-med">45%</span>
+  </div>
+  <h3 class="job-title">Senior Product Manager, Growth Incentives</h3>
+  <div class="job-meta"><span>📍 Remote (USA)</span><span>via careers page</span></div>
+</a>
+<a href="https://www.coinbase.com/careers/positions/5957003" target="_blank" class="job-card" data-company="Coinbase" data-ts="false" data-senior="false">
+  <div class="job-card-header">
+    <span class="company-emoji">🪙</span>
+    <span class="company-name">Coinbase</span>
+    <span class="badge badge-pm">Product</span>
+    <span class="score score-med">45%</span>
+  </div>
+  <h3 class="job-title">Product Manager II, Core Infrastructure</h3>
+  <div class="job-meta"><span>📍 Remote (USA)</span><span>via careers page</span></div>
+</a>
+<a href="https://careers.airbnb.com/positions/7441029/" target="_blank" class="job-card" data-company="Airbnb" data-ts="false" data-senior="false">
+  <div class="job-card-header">
+    <span class="company-emoji">🏠</span>
+    <span class="company-name">Airbnb</span>
+    <span class="badge badge-pm">Product</span>
+    <span class="score score-med">45%</span>
+  </div>
+  <h3 class="job-title">Product Manager, New Guest Experience</h3>
+  <div class="job-meta"><span>📍 United States (Pacific TZ)</span><span>via careers page</span></div>
+</a>
+<a href="https://openai.com/careers/product-manager-codex-san-francisco/" target="_blank" class="job-card" data-company="OpenAI" data-ts="false" data-senior="false">
+  <div class="job-card-header">
+    <span class="company-emoji">🧠</span>
+    <span class="company-name">OpenAI</span>
+    <span class="badge badge-pm">Product</span>
+    <span class="score score-med">45%</span>
+  </div>
+  <h3 class="job-title">Product Manager, Codex</h3>
+  <div class="job-meta"><span>📍 San Francisco, CA</span><span>via careers page</span></div>
+</a>
+<a href="https://openai.com/careers/product-manager-enterprise-identity-san-francisco/" target="_blank" class="job-card" data-company="OpenAI" data-ts="false" data-senior="false">
+  <div class="job-card-header">
+    <span class="company-emoji">🧠</span>
+    <span class="company-name">OpenAI</span>
+    <span class="badge badge-pm">Product</span>
+    <span class="score score-med">45%</span>
+  </div>
+  <h3 class="job-title">Product Manager, Enterprise Identity</h3>
+  <div class="job-meta"><span>📍 San Francisco, CA</span><span>via careers page</span></div>
+</a>
+<a href="https://openai.com/careers/product-manager-countries-and-governments-san-francisco/" target="_blank" class="job-card" data-company="OpenAI" data-ts="false" data-senior="false">
+  <div class="job-card-header">
+    <span class="company-emoji">🧠</span>
+    <span class="company-name">OpenAI</span>
+    <span class="badge badge-pm">Product</span>
+    <span class="score score-med">45%</span>
+  </div>
+  <h3 class="job-title">Product Manager, Countries & Governments</h3>
+  <div class="job-meta"><span>📍 San Francisco, CA</span><span>via careers page</span></div>
+</a>
+<a href="https://openai.com/careers/product-manager-chatgpt-for-work-san-francisco/" target="_blank" class="job-card" data-company="OpenAI" data-ts="false" data-senior="false">
+  <div class="job-card-header">
+    <span class="company-emoji">🧠</span>
+    <span class="company-name">OpenAI</span>
+    <span class="badge badge-pm">Product</span>
+    <span class="score score-med">45%</span>
+  </div>
+  <h3 class="job-title">Product Manager, ChatGPT for Work</h3>
+  <div class="job-meta"><span>📍 San Francisco, CA</span><span>via careers page</span></div>
+</a></div>
+
+  <div class="tip">
+    <h3>💡 Search Tips</h3>
+    <ul>
+      <li><strong>Re-run live:</strong> <code>python3 pm_job_search_agent.py</code> to fetch latest from company APIs</li>
+      <li><strong>Set alerts:</strong> Create LinkedIn alerts for "Trust and Safety Product Manager" and "Staff Product Manager" at target companies</li>
+      <li><strong>Greenhouse boards:</strong> Many companies use Greenhouse — check <code>boards.greenhouse.io/[company]</code> directly</li>
+      <li><strong>Extend:</strong> Add new companies by editing the COMPANIES list and GREENHOUSE_BOARDS / LEVER_BOARDS / ASHBY_BOARDS dicts in <code>pm_job_search_agent.py</code></li>
+    </ul>
+  </div>
+
+  <details>
+    <summary>📋 Search Log (10 entries)</summary>
+    <div class="log-container"><div class='log-line'>[20:17:44] Target companies: Block (Cash App), Airbnb, Coinbase, Zillow, Pinterest, Reddit, Oura, OpenAI, Anthropic, Anduril</div>
+<div class='log-line'>[20:17:44] Seniority filters: lead, staff, senior staff, director, senior director, principal, group, head of, vp</div>
+<div class='log-line'>[20:17:44] Priority domain: Trust & Safety</div>
+<div class='log-line'>[20:17:44] Mode: CACHED
+</div>
+<div class='log-line'>[20:17:44] Loading curated job snapshot (Jan 2026)...</div>
+<div class='log-line'>[20:17:44]   -> 37 verified postings loaded</div>
+<div class='log-line'>[20:17:44] 
+============================================================</div>
+<div class='log-line'>[20:17:44] Search complete! 30 relevant PM postings found.</div>
+<div class='log-line'>[20:17:44]   Trust & Safety roles: 11</div>
+<div class='log-line'>[20:17:44]   Senior-level roles:   14</div></div>
+  </details>
+</div>
+<script>
+function cl(){document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'))}
+function showAll(b){cl();b.classList.add('active');document.querySelectorAll('.job-card').forEach(c=>c.classList.remove('hidden'))}
+function filterTS(b){cl();b.classList.add('active');document.querySelectorAll('.job-card').forEach(c=>{c.classList.toggle('hidden',c.dataset.ts!=='true')})}
+function filterSr(b){cl();b.classList.add('active');document.querySelectorAll('.job-card').forEach(c=>{c.classList.toggle('hidden',c.dataset.senior!=='true')})}
+function filterCompany(b){cl();b.classList.add('active');const co=b.dataset.filterCompany;document.querySelectorAll('.job-card').forEach(c=>{c.classList.toggle('hidden',c.dataset.company!==co)})}
+</script></body></html>
