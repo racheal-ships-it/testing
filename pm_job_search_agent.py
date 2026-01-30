@@ -5,24 +5,36 @@ PM Job Search Agent
 Automated agent that searches for Lead/Staff/Director/Principal Product Management
 roles at top tech companies, with a focus on Trust & Safety positions.
 
-Two modes:
+Modes:
   1. LIVE MODE (default): Fetches from Greenhouse/Lever/Ashby APIs in real time.
-     Requires network access:  pip install requests beautifulsoup4
+     Requires network access:  pip install requests
   2. CACHED MODE (--cached): Uses curated snapshot of verified postings
      (last updated Jan 2026). No dependencies required.
 
+Daily email digest:
+  python3 pm_job_search_agent.py --email you@gmail.com --smtp-pass APP_PASSWORD
+  python3 pm_job_search_agent.py --install-cron --email you@gmail.com --smtp-pass APP_PASSWORD
+
 Usage:
-    python3 pm_job_search_agent.py                    # live API search
-    python3 pm_job_search_agent.py --cached            # use curated snapshot
-    python3 pm_job_search_agent.py --html report.html  # custom output path
+    python3 pm_job_search_agent.py                            # live API search
+    python3 pm_job_search_agent.py --cached                    # use curated snapshot
+    python3 pm_job_search_agent.py --html report.html          # custom output path
+    python3 pm_job_search_agent.py --email you@gmail.com       # run + send email digest
+    python3 pm_job_search_agent.py --install-cron --email you@gmail.com  # schedule daily 9am
+    python3 pm_job_search_agent.py --test-email --email you@gmail.com    # send test email
 """
 
 import argparse
 import json
+import os
+import smtplib
 import sys
 import time
 from dataclasses import dataclass, field, asdict
 from datetime import datetime
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from pathlib import Path
 from typing import Optional
 
 
@@ -821,35 +833,393 @@ function filterCompany(b){{cl();b.classList.add('active');const co=b.dataset.fil
 
 
 # ---------------------------------------------------------------------------
+# Seen-jobs tracker  (deduplicates across daily runs)
+# ---------------------------------------------------------------------------
+
+DATA_DIR = Path(__file__).resolve().parent / ".pm_agent_data"
+SEEN_FILE = DATA_DIR / "seen_jobs.json"
+
+
+def _load_seen() -> dict:
+    """Load the set of previously-seen job keys and their first-seen dates."""
+    if SEEN_FILE.exists():
+        try:
+            return json.loads(SEEN_FILE.read_text())
+        except (json.JSONDecodeError, OSError):
+            pass
+    return {}
+
+
+def _save_seen(seen: dict):
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    SEEN_FILE.write_text(json.dumps(seen, indent=2))
+
+
+def partition_new_jobs(jobs: list[JobPosting]) -> tuple[list[JobPosting], list[JobPosting]]:
+    """Split jobs into (new, previously_seen). Updates the seen-jobs file."""
+    seen = _load_seen()
+    new_jobs = []
+    old_jobs = []
+    today = datetime.now().strftime("%Y-%m-%d")
+
+    for j in jobs:
+        key = j.url or f"{j.company}|{j.title}"
+        if key in seen:
+            old_jobs.append(j)
+        else:
+            new_jobs.append(j)
+            seen[key] = today
+
+    _save_seen(seen)
+    return new_jobs, old_jobs
+
+
+# ---------------------------------------------------------------------------
+# Email digest
+# ---------------------------------------------------------------------------
+
+def _build_email_html(new_jobs: list[JobPosting], all_jobs: list[JobPosting]) -> str:
+    """Build a nicely formatted HTML email body."""
+    today = datetime.now().strftime("%B %d, %Y")
+    ts_new = [j for j in new_jobs if j.is_trust_safety]
+    sr_new = [j for j in new_jobs if j.seniority]
+
+    def _row(j: JobPosting) -> str:
+        ts_badge = ' <span style="background:#fff0f0;color:#cc3333;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;">T&amp;S</span>' if j.is_trust_safety else ""
+        lvl_badge = f' <span style="background:#f0fff0;color:#228b22;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;">{j.seniority}</span>' if j.seniority else ""
+        loc = j.location or "See posting"
+        link = f'<a href="{j.url}" style="color:#4a69bd;text-decoration:none;font-weight:600;">{j.title}</a>' if j.url else j.title
+        return f"""<tr>
+  <td style="padding:12px 16px;border-bottom:1px solid #eee;">{link}{ts_badge}{lvl_badge}</td>
+  <td style="padding:12px 16px;border-bottom:1px solid #eee;color:#666;">{j.company}</td>
+  <td style="padding:12px 16px;border-bottom:1px solid #eee;color:#888;font-size:13px;">{loc}</td>
+  <td style="padding:12px 16px;border-bottom:1px solid #eee;text-align:center;font-weight:700;color:{'#228b22' if j.relevance_score>=70 else '#b8860b' if j.relevance_score>=45 else '#888'};">{int(j.relevance_score)}%</td>
+</tr>"""
+
+    new_rows = "\n".join(_row(j) for j in new_jobs) if new_jobs else '<tr><td colspan="4" style="padding:24px;text-align:center;color:#888;">No new postings found today. All current openings were already in your feed.</td></tr>'
+
+    return f"""<!DOCTYPE html><html><head><meta charset="utf-8"></head>
+<body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f5f5;margin:0;padding:0;">
+<div style="max-width:700px;margin:0 auto;background:#fff;">
+
+  <!-- Header -->
+  <div style="background:linear-gradient(135deg,#1a1a2e,#0f3460);padding:32px 24px;text-align:center;">
+    <h1 style="color:#fff;margin:0;font-size:22px;">PM Job Search Daily Digest</h1>
+    <p style="color:#8892b0;margin:8px 0 0;font-size:14px;">{today}</p>
+  </div>
+
+  <!-- Stats -->
+  <div style="display:flex;background:#fafafa;border-bottom:1px solid #eee;">
+    <div style="flex:1;text-align:center;padding:16px;">
+      <div style="font-size:28px;font-weight:700;color:#4a69bd;">{len(new_jobs)}</div>
+      <div style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px;">New Today</div>
+    </div>
+    <div style="flex:1;text-align:center;padding:16px;">
+      <div style="font-size:28px;font-weight:700;color:#cc3333;">{len(ts_new)}</div>
+      <div style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px;">New T&amp;S</div>
+    </div>
+    <div style="flex:1;text-align:center;padding:16px;">
+      <div style="font-size:28px;font-weight:700;color:#228b22;">{len(sr_new)}</div>
+      <div style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px;">New Senior</div>
+    </div>
+    <div style="flex:1;text-align:center;padding:16px;">
+      <div style="font-size:28px;font-weight:700;color:#555;">{len(all_jobs)}</div>
+      <div style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px;">Total Active</div>
+    </div>
+  </div>
+
+  <!-- New jobs table -->
+  <div style="padding:24px;">
+    <h2 style="font-size:16px;color:#333;margin:0 0 16px;">{"🆕 New Postings" if new_jobs else "📋 Daily Summary"}</h2>
+    <table style="width:100%;border-collapse:collapse;font-size:14px;">
+      <thead>
+        <tr style="background:#f8f9fa;">
+          <th style="padding:10px 16px;text-align:left;color:#666;font-size:12px;text-transform:uppercase;border-bottom:2px solid #eee;">Role</th>
+          <th style="padding:10px 16px;text-align:left;color:#666;font-size:12px;text-transform:uppercase;border-bottom:2px solid #eee;">Company</th>
+          <th style="padding:10px 16px;text-align:left;color:#666;font-size:12px;text-transform:uppercase;border-bottom:2px solid #eee;">Location</th>
+          <th style="padding:10px 16px;text-align:center;color:#666;font-size:12px;text-transform:uppercase;border-bottom:2px solid #eee;">Match</th>
+        </tr>
+      </thead>
+      <tbody>{new_rows}</tbody>
+    </table>
+  </div>
+
+  <!-- Footer -->
+  <div style="background:#fafafa;padding:20px 24px;border-top:1px solid #eee;font-size:12px;color:#999;text-align:center;">
+    <p>PM Job Search Agent &middot; Searching {len(COMPANIES)} companies &middot; Focus: Trust &amp; Safety</p>
+    <p style="margin-top:4px;">Target: Lead / Staff / Director / Principal PM roles in the US</p>
+  </div>
+
+</div></body></html>"""
+
+
+def send_email_digest(
+    new_jobs: list[JobPosting],
+    all_jobs: list[JobPosting],
+    to_email: str,
+    smtp_user: str = "",
+    smtp_pass: str = "",
+    smtp_host: str = "smtp.gmail.com",
+    smtp_port: int = 587,
+    from_email: str = "",
+):
+    """Send the daily digest via SMTP (defaults to Gmail)."""
+    smtp_user = smtp_user or to_email
+    from_email = from_email or smtp_user
+
+    msg = MIMEMultipart("alternative")
+    today = datetime.now().strftime("%b %d")
+    new_count = len(new_jobs)
+    ts_count = sum(1 for j in new_jobs if j.is_trust_safety)
+
+    if new_count > 0:
+        msg["Subject"] = f"[PM Jobs] {new_count} new posting{'s' if new_count != 1 else ''} - {today}" + (f" ({ts_count} T&S)" if ts_count else "")
+    else:
+        msg["Subject"] = f"[PM Jobs] Daily digest - {today} (no new postings)"
+
+    msg["From"] = from_email
+    msg["To"] = to_email
+
+    # Plain-text fallback
+    lines = [f"PM Job Search Daily Digest - {today}", f"New postings: {new_count}", ""]
+    for j in new_jobs:
+        ts = " [T&S]" if j.is_trust_safety else ""
+        lvl = f" [{j.seniority}]" if j.seniority else ""
+        lines.append(f"- {j.company}: {j.title}{lvl}{ts}")
+        if j.url:
+            lines.append(f"  {j.url}")
+    if not new_jobs:
+        lines.append("No new postings found today.")
+    lines.append(f"\nTotal active PM postings tracked: {len(all_jobs)}")
+    plain = "\n".join(lines)
+
+    html = _build_email_html(new_jobs, all_jobs)
+
+    msg.attach(MIMEText(plain, "plain"))
+    msg.attach(MIMEText(html, "html"))
+
+    print(f"Connecting to {smtp_host}:{smtp_port}...")
+    with smtplib.SMTP(smtp_host, smtp_port) as server:
+        server.ehlo()
+        server.starttls()
+        server.ehlo()
+        server.login(smtp_user, smtp_pass)
+        server.sendmail(from_email, [to_email], msg.as_string())
+
+    print(f"✅ Email sent to {to_email}")
+
+
+# ---------------------------------------------------------------------------
+# Cron installer
+# ---------------------------------------------------------------------------
+
+def install_cron(email: str, smtp_user: str, smtp_pass: str, smtp_host: str, smtp_port: int, hour: int = 9, minute: int = 0):
+    """Install a daily cron job that runs the agent and emails results."""
+    import subprocess
+
+    script_path = Path(__file__).resolve()
+    python = sys.executable
+
+    # Build the command the cron job will run
+    cmd_parts = [
+        python, str(script_path),
+        "--email", email,
+    ]
+    if smtp_user and smtp_user != email:
+        cmd_parts += ["--smtp-user", smtp_user]
+    if smtp_pass:
+        cmd_parts += ["--smtp-pass", smtp_pass]
+    if smtp_host != "smtp.gmail.com":
+        cmd_parts += ["--smtp-host", smtp_host]
+    if smtp_port != 587:
+        cmd_parts += ["--smtp-port", str(smtp_port)]
+
+    cron_cmd = " ".join(cmd_parts)
+    cron_line = f"{minute} {hour} * * * {cron_cmd} >> {DATA_DIR / 'cron.log'} 2>&1"
+
+    # Read existing crontab, remove old agent entries, add new one
+    try:
+        existing = subprocess.check_output(["crontab", "-l"], text=True, stderr=subprocess.DEVNULL)
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        existing = ""
+
+    filtered = [line for line in existing.strip().splitlines() if "pm_job_search_agent" not in line]
+    filtered.append(cron_line)
+    new_crontab = "\n".join(filtered) + "\n"
+
+    proc = subprocess.run(["crontab", "-"], input=new_crontab, text=True, capture_output=True)
+    if proc.returncode != 0:
+        print(f"ERROR installing cron: {proc.stderr}")
+        return False
+
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    print(f"✅ Cron job installed! Daily email at {hour:02d}:{minute:02d}")
+    print(f"   Cron line: {cron_line}")
+    print(f"   Log file:  {DATA_DIR / 'cron.log'}")
+    print(f"   To remove: crontab -e  (delete the pm_job_search_agent line)")
+    return True
+
+
+def uninstall_cron():
+    """Remove the agent's cron entry."""
+    import subprocess
+    try:
+        existing = subprocess.check_output(["crontab", "-l"], text=True, stderr=subprocess.DEVNULL)
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        print("No crontab found.")
+        return
+    filtered = [line for line in existing.strip().splitlines() if "pm_job_search_agent" not in line]
+    new_crontab = "\n".join(filtered) + "\n" if filtered else ""
+    subprocess.run(["crontab", "-"], input=new_crontab, text=True, capture_output=True)
+    print("✅ Cron job removed.")
+
+
+# ---------------------------------------------------------------------------
 # CLI
 # ---------------------------------------------------------------------------
 
 def main():
-    parser = argparse.ArgumentParser(description="PM Job Search Agent")
+    parser = argparse.ArgumentParser(
+        description="PM Job Search Agent - finds senior PM roles at top tech companies",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  %(prog)s                                           # search & print results
+  %(prog)s --email you@gmail.com --smtp-pass PASS    # search + email digest
+  %(prog)s --install-cron --email you@gmail.com      # schedule daily 9am email
+  %(prog)s --uninstall-cron                          # remove daily schedule
+  %(prog)s --test-email --email you@gmail.com        # send a test email
+  %(prog)s --cached                                  # use offline snapshot
+""",
+    )
     parser.add_argument("--output", "-o", default="pm_jobs_results.json", help="JSON output path")
     parser.add_argument("--html", default="pm_jobs_dashboard.html", help="HTML report path")
     parser.add_argument("--cached", action="store_true", help="Use curated snapshot instead of live API calls")
+
+    # Email options
+    email_group = parser.add_argument_group("email digest")
+    email_group.add_argument("--email", help="Recipient email address for daily digest")
+    email_group.add_argument("--smtp-user", help="SMTP login username (defaults to --email)")
+    email_group.add_argument("--smtp-pass", default=os.environ.get("PM_AGENT_SMTP_PASS", ""), help="SMTP password or app password (or set PM_AGENT_SMTP_PASS env var)")
+    email_group.add_argument("--smtp-host", default="smtp.gmail.com", help="SMTP server host (default: smtp.gmail.com)")
+    email_group.add_argument("--smtp-port", type=int, default=587, help="SMTP server port (default: 587)")
+    email_group.add_argument("--send-if-empty", action="store_true", help="Send email even if there are no new jobs")
+
+    # Scheduling
+    sched_group = parser.add_argument_group("scheduling")
+    sched_group.add_argument("--install-cron", action="store_true", help="Install a daily cron job (default 9:00 AM)")
+    sched_group.add_argument("--cron-hour", type=int, default=9, help="Hour for daily cron (0-23, default: 9)")
+    sched_group.add_argument("--cron-minute", type=int, default=0, help="Minute for daily cron (0-59, default: 0)")
+    sched_group.add_argument("--uninstall-cron", action="store_true", help="Remove the daily cron job")
+
+    # Utility
+    parser.add_argument("--test-email", action="store_true", help="Send a test email and exit")
+    parser.add_argument("--reset-seen", action="store_true", help="Clear the seen-jobs history (all jobs treated as new)")
+
     args = parser.parse_args()
+
+    # --- Handle utility commands first ---
+
+    if args.uninstall_cron:
+        uninstall_cron()
+        return
+
+    if args.reset_seen:
+        if SEEN_FILE.exists():
+            SEEN_FILE.unlink()
+            print("✅ Seen-jobs history cleared. Next run will treat all jobs as new.")
+        else:
+            print("No history file found.")
+        return
+
+    if args.install_cron:
+        if not args.email:
+            parser.error("--install-cron requires --email")
+        if not args.smtp_pass:
+            parser.error("--install-cron requires --smtp-pass (or PM_AGENT_SMTP_PASS env var)")
+        install_cron(
+            email=args.email,
+            smtp_user=args.smtp_user or args.email,
+            smtp_pass=args.smtp_pass,
+            smtp_host=args.smtp_host,
+            smtp_port=args.smtp_port,
+            hour=args.cron_hour,
+            minute=args.cron_minute,
+        )
+        return
+
+    if args.test_email:
+        if not args.email:
+            parser.error("--test-email requires --email")
+        if not args.smtp_pass:
+            parser.error("--test-email requires --smtp-pass (or PM_AGENT_SMTP_PASS env var)")
+        # Build a small test payload
+        sample = [JobPosting(
+            title="Staff Product Manager, Trust & Safety (TEST)",
+            company="Example Corp",
+            location="Remote (US)",
+            url="https://example.com",
+            description="This is a test email from the PM Job Search Agent.",
+            source="test",
+        )]
+        sample[0].relevance_score = compute_relevance(sample[0])
+        print("Sending test email...")
+        send_email_digest(
+            new_jobs=sample, all_jobs=sample, to_email=args.email,
+            smtp_user=args.smtp_user or "", smtp_pass=args.smtp_pass,
+            smtp_host=args.smtp_host, smtp_port=args.smtp_port,
+        )
+        return
+
+    # --- Main search flow ---
 
     agent = JobSearchAgent(use_cache=args.cached)
     jobs = agent.run()
 
+    # Partition into new vs. seen
+    new_jobs, old_jobs = partition_new_jobs(jobs)
+    print(f"\n  🆕 New postings:          {len(new_jobs)}")
+    print(f"  📋 Previously seen:       {len(old_jobs)}")
+
+    # Save JSON
     with open(args.output, "w") as f:
         f.write(agent.to_json())
     print(f"\n✅ JSON saved to {args.output}")
 
+    # Save HTML
     html = generate_html_report(jobs, agent.log_lines)
     with open(args.html, "w") as f:
         f.write(html)
     print(f"✅ Dashboard saved to {args.html}")
 
+    # Send email if configured
+    if args.email:
+        if new_jobs or args.send_if_empty:
+            if not args.smtp_pass:
+                print("⚠️  --email requires --smtp-pass (or PM_AGENT_SMTP_PASS env var). Skipping email.")
+            else:
+                try:
+                    send_email_digest(
+                        new_jobs=new_jobs, all_jobs=jobs, to_email=args.email,
+                        smtp_user=args.smtp_user or "", smtp_pass=args.smtp_pass,
+                        smtp_host=args.smtp_host, smtp_port=args.smtp_port,
+                    )
+                except Exception as e:
+                    print(f"❌ Failed to send email: {e}")
+        else:
+            print(f"📭 No new jobs found. Skipping email. (Use --send-if-empty to send anyway.)")
+
+    # Print summary
     print(f"\n{'=' * 64}")
-    print(" TOP MATCHES")
+    print(" TOP MATCHES" + (" (🆕 = new today)" if new_jobs else ""))
     print(f"{'=' * 64}")
+    new_keys = {j.url or f"{j.company}|{j.title}" for j in new_jobs}
     for j in jobs[:25]:
         ts = " [T&S]" if j.is_trust_safety else ""
         lvl = f" [{j.seniority}]" if j.seniority else ""
-        print(f"  {int(j.relevance_score):3d}% | {j.company:22s} | {j.title}{lvl}{ts}")
+        key = j.url or f"{j.company}|{j.title}"
+        new_marker = " 🆕" if key in new_keys else ""
+        print(f"  {int(j.relevance_score):3d}% | {j.company:22s} | {j.title}{lvl}{ts}{new_marker}")
         if j.url:
             print(f"       └─ {j.url}")
     print()
