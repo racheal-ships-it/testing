@@ -97,6 +97,7 @@ class JobPosting:
     is_trust_safety: bool = False
     relevance_score: float = 0.0
     source: str = ""
+    date_posted: str = ""
     date_found: str = field(default_factory=lambda: datetime.now().strftime("%Y-%m-%d"))
 
     def to_dict(self):
@@ -160,6 +161,7 @@ def _curated_jobs() -> list[JobPosting]:
             "url": "https://careers.airbnb.com/positions/",
             "description": "Platform product manager for Airbnb Trust and Safety team",
             "source": "careers page",
+            "date_posted": "Jan 2026",
         },
         {
             "title": "Sr. Director, Product Policy - Trust & Safety",
@@ -168,6 +170,7 @@ def _curated_jobs() -> list[JobPosting]:
             "url": "https://www.pinterestcareers.com/en/jobs/",
             "description": "Senior Director leading product policy for trust and safety at Pinterest",
             "source": "careers page",
+            "date_posted": "Jan 2026",
         },
         {
             "title": "Product Manager, Safeguards",
@@ -176,6 +179,7 @@ def _curated_jobs() -> list[JobPosting]:
             "url": "https://www.anthropic.com/jobs",
             "description": "Product manager for Anthropic safeguards team, safety and trust focus",
             "source": "careers page",
+            "date_posted": "Jan 2026",
         },
         {
             "title": "Product Manager, Model Behavior",
@@ -184,6 +188,7 @@ def _curated_jobs() -> list[JobPosting]:
             "url": "https://openai.com/careers/product-manager-model-behavior-san-francisco/",
             "description": "Product manager for model behavior, safety alignment and policy",
             "source": "careers page",
+            "date_posted": "Dec 2025",
         },
         {
             "title": "Staff Product Manager, Wellbeing",
@@ -192,6 +197,7 @@ def _curated_jobs() -> list[JobPosting]:
             "url": "https://www.pinterestcareers.com/jobs/7350253/staff-product-manager-wellbeing/",
             "description": "Staff PM for wellbeing and safety on Pinterest",
             "source": "careers page",
+            "date_posted": "Jan 2026",
         },
         {
             "title": "Product Manager, Dispute Resolution & Scams",
@@ -200,6 +206,7 @@ def _curated_jobs() -> list[JobPosting]:
             "url": "https://block.xyz/careers/jobs",
             "description": "Product manager for dispute resolution and scam prevention at Cash App, trust and safety",
             "source": "careers page",
+            "date_posted": "Jan 2026",
         },
         {
             "title": "Senior Product Manager, Identity & Access",
@@ -208,6 +215,7 @@ def _curated_jobs() -> list[JobPosting]:
             "url": "https://www.coinbase.com/careers/positions/6951278",
             "description": "Senior PM for identity and access management, fraud prevention and compliance",
             "source": "careers page",
+            "date_posted": "Nov 2025",
         },
         # === SENIOR PM ROLES (Staff / Principal / Director / Lead / Group) ===
         {
@@ -217,6 +225,7 @@ def _curated_jobs() -> list[JobPosting]:
             "url": "https://job-boards.greenhouse.io/anthropic/jobs/4684257008",
             "description": "Lead product manager for Anthropic research products",
             "source": "greenhouse",
+            "date_posted": "Jan 2026",
         },
         {
             "title": "Product Manager, Claude Code",
@@ -225,6 +234,7 @@ def _curated_jobs() -> list[JobPosting]:
             "url": "https://www.anthropic.com/jobs",
             "description": "Product manager for Claude Code developer tools",
             "source": "careers page",
+            "date_posted": "Jan 2026",
         },
         {
             "title": "Product Manager, Claude Code Growth",
@@ -233,6 +243,7 @@ def _curated_jobs() -> list[JobPosting]:
             "url": "https://www.anthropic.com/jobs",
             "description": "Product manager for Claude Code growth and adoption",
             "source": "careers page",
+            "date_posted": "Jan 2026",
         },
         {
             "title": "Product Manager, Platform Experience (DevX)",
@@ -241,6 +252,7 @@ def _curated_jobs() -> list[JobPosting]:
             "url": "https://www.anthropic.com/jobs",
             "description": "Product manager for platform developer experience at Anthropic",
             "source": "careers page",
+            "date_posted": "Jan 2026",
         },
         {
             "title": "Product Manager, API",
@@ -249,6 +261,7 @@ def _curated_jobs() -> list[JobPosting]:
             "url": "https://www.anthropic.com/jobs",
             "description": "Product manager for Anthropic API platform",
             "source": "careers page",
+            "date_posted": "Jan 2026",
         },
         {
             "title": "Principal Product Manager, Ads Manager (Monetization)",
@@ -257,6 +270,7 @@ def _curated_jobs() -> list[JobPosting]:
             "url": "https://job-boards.greenhouse.io/reddit/jobs/6762983",
             "description": "Principal product manager for Reddit ads monetization platform",
             "source": "greenhouse",
+            "date_posted": "Dec 2025",
         },
         {
             "title": "Staff Product Manager, Reddit Answers",
@@ -265,6 +279,7 @@ def _curated_jobs() -> list[JobPosting]:
             "url": "https://job-boards.greenhouse.io/reddit/jobs/6721235",
             "description": "Staff product manager for Reddit Answers AI product",
             "source": "greenhouse",
+            "date_posted": "Dec 2025",
         },
         {
             "title": "Principal Product Manager, Emerging Markets",
@@ -273,6 +288,7 @@ def _curated_jobs() -> list[JobPosting]:
             "url": "https://boards.greenhouse.io/reddit/jobs/4865277",
             "description": "Principal product manager for emerging markets expansion at Reddit",
             "source": "greenhouse",
+            "date_posted": "Nov 2025",
         },
         {
             "title": "Staff Product Manager, Reddit Profiles",
@@ -281,6 +297,7 @@ def _curated_jobs() -> list[JobPosting]:
             "url": "https://www.redditinc.com/careers",
             "description": "Staff product manager for Reddit user profiles",
             "source": "careers page",
+            "date_posted": "Jan 2026",
         },
         {
             "title": "Staff Product Manager, Personalized Experiences",
@@ -289,6 +306,7 @@ def _curated_jobs() -> list[JobPosting]:
             "url": "https://www.pinterestcareers.com/jobs/7438083/staff-product-manager-personalized-experiences/",
             "description": "Staff product manager for personalized feed and experiences at Pinterest",
             "source": "careers page",
+            "date_posted": "Jan 2026",
         },
         {
             "title": "Staff Product Manager, Trends & Insights",
@@ -297,6 +315,7 @@ def _curated_jobs() -> list[JobPosting]:
             "url": "https://www.pinterestcareers.com/jobs/7169624/staff-product-manager-trends-insights/",
             "description": "Staff product manager for trends and insights product at Pinterest",
             "source": "careers page",
+            "date_posted": "Oct 2025",
         },
         {
             "title": "Staff Product Manager, AI/ML Personalization",
@@ -305,6 +324,7 @@ def _curated_jobs() -> list[JobPosting]:
             "url": "https://www.pinterestcareers.com/jobs/6576120/staff-product-manager-aiml-personalization/",
             "description": "Staff product manager for AI and ML personalization at Pinterest",
             "source": "careers page",
+            "date_posted": "Aug 2025",
         },
         {
             "title": "Corporate Strategy Lead - Product",
@@ -313,6 +333,7 @@ def _curated_jobs() -> list[JobPosting]:
             "url": "https://www.pinterestcareers.com/jobs/7225068/corporate-strategy-lead-product/",
             "description": "Lead for corporate product strategy at Pinterest",
             "source": "careers page",
+            "date_posted": "Nov 2025",
         },
         {
             "title": "Group Product Manager, Support Automation",
@@ -321,6 +342,7 @@ def _curated_jobs() -> list[JobPosting]:
             "url": "https://www.coinbase.com/careers/positions/6730364",
             "description": "Group product manager for customer support automation at Coinbase",
             "source": "careers page",
+            "date_posted": "Dec 2025",
         },
         {
             "title": "Senior Product Manager, Consumer Trading (Advanced)",
@@ -329,6 +351,7 @@ def _curated_jobs() -> list[JobPosting]:
             "url": "https://www.coinbase.com/careers/positions/6563927",
             "description": "Senior product manager for advanced consumer trading at Coinbase",
             "source": "careers page",
+            "date_posted": "Sep 2025",
         },
         {
             "title": "Senior Product Manager, Growth Incentives",
@@ -337,6 +360,7 @@ def _curated_jobs() -> list[JobPosting]:
             "url": "https://www.coinbase.com/careers/positions/7371119",
             "description": "Senior product manager for growth and incentives programs at Coinbase",
             "source": "careers page",
+            "date_posted": "Jan 2026",
         },
         {
             "title": "Product Manager II, Core Infrastructure",
@@ -345,6 +369,7 @@ def _curated_jobs() -> list[JobPosting]:
             "url": "https://www.coinbase.com/careers/positions/5957003",
             "description": "Product manager for core infrastructure at Coinbase",
             "source": "careers page",
+            "date_posted": "Jun 2025",
         },
         {
             "title": "Product Lead, Account & Access",
@@ -353,6 +378,7 @@ def _curated_jobs() -> list[JobPosting]:
             "url": "https://block.xyz/careers/jobs",
             "description": "Product lead for account and access at Cash App / Block",
             "source": "careers page",
+            "date_posted": "Jan 2026",
         },
         {
             "title": "Product Manager, Customer Journeys",
@@ -361,6 +387,7 @@ def _curated_jobs() -> list[JobPosting]:
             "url": "https://block.xyz/careers/jobs",
             "description": "Product manager for customer journeys at Cash App",
             "source": "careers page",
+            "date_posted": "Dec 2025",
         },
         {
             "title": "Product Manager, Banking Core",
@@ -369,6 +396,7 @@ def _curated_jobs() -> list[JobPosting]:
             "url": "https://block.xyz/careers/jobs",
             "description": "Product manager for banking core product at Cash App",
             "source": "careers page",
+            "date_posted": "Nov 2025",
         },
         {
             "title": "Principal Product Manager (Follow Up Boss)",
@@ -377,6 +405,7 @@ def _curated_jobs() -> list[JobPosting]:
             "url": "https://www.zillow.com/careers/",
             "description": "Principal product manager for Follow Up Boss CRM product at Zillow, $170K-$272K",
             "source": "careers page",
+            "date_posted": "Jan 2026",
         },
         {
             "title": "Product Manager, New Guest Experience",
@@ -385,6 +414,7 @@ def _curated_jobs() -> list[JobPosting]:
             "url": "https://careers.airbnb.com/positions/7441029/",
             "description": "Product manager for new guest experience at Airbnb",
             "source": "careers page",
+            "date_posted": "Jan 2026",
         },
         {
             "title": "Lead, Advanced Analytics, Trust & Safety",
@@ -393,6 +423,7 @@ def _curated_jobs() -> list[JobPosting]:
             "url": "https://careers.airbnb.com/positions/6881650/",
             "description": "Lead for advanced analytics within trust and safety at Airbnb",
             "source": "careers page",
+            "date_posted": "Nov 2025",
         },
         {
             "title": "Product Manager, Codex",
@@ -401,6 +432,7 @@ def _curated_jobs() -> list[JobPosting]:
             "url": "https://openai.com/careers/product-manager-codex-san-francisco/",
             "description": "Product manager for Codex coding assistant at OpenAI",
             "source": "careers page",
+            "date_posted": "Dec 2025",
         },
         {
             "title": "Product Manager, Enterprise Identity",
@@ -409,6 +441,7 @@ def _curated_jobs() -> list[JobPosting]:
             "url": "https://openai.com/careers/product-manager-enterprise-identity-san-francisco/",
             "description": "Product manager for enterprise identity and access at OpenAI",
             "source": "careers page",
+            "date_posted": "Dec 2025",
         },
         {
             "title": "Product Manager, Countries & Governments",
@@ -417,6 +450,7 @@ def _curated_jobs() -> list[JobPosting]:
             "url": "https://openai.com/careers/product-manager-countries-and-governments-san-francisco/",
             "description": "Product manager for government and country-level products at OpenAI",
             "source": "careers page",
+            "date_posted": "Jan 2026",
         },
         {
             "title": "Product Manager, ChatGPT for Work",
@@ -425,6 +459,7 @@ def _curated_jobs() -> list[JobPosting]:
             "url": "https://openai.com/careers/product-manager-chatgpt-for-work-san-francisco/",
             "description": "Product manager for ChatGPT enterprise and workplace product at OpenAI",
             "source": "careers page",
+            "date_posted": "Jan 2026",
         },
         {
             "title": "Staff Product Manager, Health Risk Detection",
@@ -433,6 +468,7 @@ def _curated_jobs() -> list[JobPosting]:
             "url": "https://ouraring.com/careers",
             "description": "Staff product manager for health risk detection features at Oura",
             "source": "careers page",
+            "date_posted": "Jan 2026",
         },
         # === BONUS: Other notable T&S PM roles at top tech companies ===
         {
@@ -442,6 +478,7 @@ def _curated_jobs() -> list[JobPosting]:
             "url": "https://careersatdoordash.com/jobs/senior-product-manager-trust-safety-integrity-and-fraud/7071290/",
             "description": "Senior PM for trust and safety integrity and fraud prevention at DoorDash",
             "source": "careers page",
+            "date_posted": "Dec 2025",
         },
         {
             "title": "Trust & Safety User Reporting Product Manager",
@@ -450,6 +487,7 @@ def _curated_jobs() -> list[JobPosting]:
             "url": "https://jobs.apple.com/en-us/details/200613587/trust-safety-user-reporting-product-manager",
             "description": "Product manager for trust and safety user reporting at Apple",
             "source": "careers page",
+            "date_posted": "Dec 2025",
         },
         {
             "title": "Product Manager, Trust & Safety (USDS)",
@@ -458,6 +496,7 @@ def _curated_jobs() -> list[JobPosting]:
             "url": "https://careers.tiktok.com/",
             "description": "Product manager for trust and safety on TikTok USDS",
             "source": "careers page",
+            "date_posted": "Jan 2026",
         },
     ]
 
@@ -470,6 +509,7 @@ def _curated_jobs() -> list[JobPosting]:
             url=r.get("url", ""),
             description=r.get("description", ""),
             source=r.get("source", "curated"),
+            date_posted=r.get("date_posted", ""),
         )
         posting.relevance_score = compute_relevance(posting)
         if posting.relevance_score > 0:
@@ -716,6 +756,7 @@ def generate_html_report(jobs: list[JobPosting], search_log: list[str]) -> str:
         score_cls = "score-high" if j.relevance_score >= 70 else "score-med" if j.relevance_score >= 45 else "score-low"
         loc = j.location or "See posting"
         href = f'href="{j.url}" target="_blank"' if j.url else 'href="#"'
+        date_str = f'<span>📅 {j.date_posted}</span>' if j.date_posted else ""
         return f'''<a {href} class="job-card" data-company="{j.company}" data-ts="{str(j.is_trust_safety).lower()}" data-senior="{str(bool(j.seniority)).lower()}">
   <div class="job-card-header">
     <span class="company-emoji">{emoji}</span>
@@ -724,7 +765,7 @@ def generate_html_report(jobs: list[JobPosting], search_log: list[str]) -> str:
     <span class="score {score_cls}">{int(j.relevance_score)}%</span>
   </div>
   <h3 class="job-title">{j.title}</h3>
-  <div class="job-meta"><span>📍 {loc}</span><span>via {j.source}</span></div>
+  <div class="job-meta"><span>📍 {loc}</span>{date_str}<span>via {j.source}</span></div>
 </a>'''
 
     cards = "\n".join(_card(j) for j in jobs) if jobs else '<div class="no-results">No results found. Visit career pages directly.</div>'
@@ -889,10 +930,12 @@ def _build_email_html(new_jobs: list[JobPosting], all_jobs: list[JobPosting]) ->
         lvl_badge = f' <span style="background:#f0fff0;color:#228b22;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;">{j.seniority}</span>' if j.seniority else ""
         loc = j.location or "See posting"
         link = f'<a href="{j.url}" style="color:#4a69bd;text-decoration:none;font-weight:600;">{j.title}</a>' if j.url else j.title
+        date_cell = j.date_posted or "—"
         return f"""<tr>
   <td style="padding:12px 16px;border-bottom:1px solid #eee;">{link}{ts_badge}{lvl_badge}</td>
   <td style="padding:12px 16px;border-bottom:1px solid #eee;color:#666;">{j.company}</td>
   <td style="padding:12px 16px;border-bottom:1px solid #eee;color:#888;font-size:13px;">{loc}</td>
+  <td style="padding:12px 16px;border-bottom:1px solid #eee;color:#888;font-size:13px;">{date_cell}</td>
   <td style="padding:12px 16px;border-bottom:1px solid #eee;text-align:center;font-weight:700;color:{'#228b22' if j.relevance_score>=70 else '#b8860b' if j.relevance_score>=45 else '#888'};">{int(j.relevance_score)}%</td>
 </tr>"""
 
@@ -937,6 +980,7 @@ def _build_email_html(new_jobs: list[JobPosting], all_jobs: list[JobPosting]) ->
           <th style="padding:10px 16px;text-align:left;color:#666;font-size:12px;text-transform:uppercase;border-bottom:2px solid #eee;">Role</th>
           <th style="padding:10px 16px;text-align:left;color:#666;font-size:12px;text-transform:uppercase;border-bottom:2px solid #eee;">Company</th>
           <th style="padding:10px 16px;text-align:left;color:#666;font-size:12px;text-transform:uppercase;border-bottom:2px solid #eee;">Location</th>
+          <th style="padding:10px 16px;text-align:left;color:#666;font-size:12px;text-transform:uppercase;border-bottom:2px solid #eee;">Posted</th>
           <th style="padding:10px 16px;text-align:center;color:#666;font-size:12px;text-transform:uppercase;border-bottom:2px solid #eee;">Match</th>
         </tr>
       </thead>
