@@ -1222,6 +1222,7 @@ Examples:
 
     # Utility
     parser.add_argument("--test-email", action="store_true", help="Send a test email and exit")
+    parser.add_argument("--dry-run", action="store_true", help="Generate email HTML without sending (saves to pm_jobs_email.html)")
     parser.add_argument("--reset-seen", action="store_true", help="Clear the seen-jobs history (all jobs treated as new)")
 
     args = parser.parse_args()
@@ -1259,8 +1260,8 @@ Examples:
     if args.test_email:
         if not args.email:
             parser.error("--test-email requires --email")
-        if not args.smtp_pass:
-            parser.error("--test-email requires --smtp-pass (or PM_AGENT_SMTP_PASS env var)")
+        if not args.dry_run and not args.smtp_pass:
+            parser.error("--test-email requires --smtp-pass (or PM_AGENT_SMTP_PASS env var). Use --dry-run to preview without sending.")
         # Build a small test payload
         sample = [JobPosting(
             title="Staff Product Manager, Trust & Safety (TEST)",
@@ -1269,8 +1270,16 @@ Examples:
             url="https://example.com",
             description="This is a test email from the PM Job Search Agent.",
             source="test",
+            date_posted="Mar 2026",
         )]
         sample[0].relevance_score = compute_relevance(sample[0])
+        if args.dry_run:
+            html = _build_email_html(sample, sample)
+            out_path = Path("pm_jobs_email.html")
+            out_path.write_text(html)
+            print(f"✅ Dry-run: email HTML saved to {out_path}")
+            print(f"   Open in browser: file://{out_path.absolute()}")
+            return
         print("Sending test email...")
         send_email_digest(
             new_jobs=sample, all_jobs=sample, to_email=args.email,
@@ -1303,8 +1312,15 @@ Examples:
     # Send email if configured
     if args.email:
         if new_jobs or args.send_if_empty:
-            if not args.smtp_pass:
+            if args.dry_run:
+                email_html = _build_email_html(new_jobs, jobs)
+                out_path = Path("pm_jobs_email.html")
+                out_path.write_text(email_html)
+                print(f"✅ Dry-run: email HTML saved to {out_path}")
+                print(f"   Recipient would be: {args.email}")
+            elif not args.smtp_pass:
                 print("⚠️  --email requires --smtp-pass (or PM_AGENT_SMTP_PASS env var). Skipping email.")
+                print("   Use --dry-run to preview the email without sending.")
             else:
                 try:
                     send_email_digest(
