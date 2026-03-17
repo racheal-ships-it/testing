@@ -1,5 +1,5 @@
 {
-  "search_date": "2026-03-17T03:01:16.726972",
+  "search_date": "2026-03-17T03:08:43.075594",
   "total_results": 15,
   "jobs": [
     {
@@ -214,15 +214,15 @@
     }
   ],
   "search_log": [
-    "[03:01:16] Target companies: Block (Cash App), Airbnb, Coinbase, Zillow, Pinterest, Reddit, Oura, OpenAI, Anthropic, Anduril",
-    "[03:01:16] Seniority filters: lead, staff, senior staff, director, senior director, principal, group, head of, vp",
-    "[03:01:16] Priority domain: Trust & Safety",
-    "[03:01:16] Mode: CACHED\n",
-    "[03:01:16] Loading curated job snapshot (Jan 2026)...",
-    "[03:01:16]   -> 20 verified postings loaded",
-    "[03:01:16] \n============================================================",
-    "[03:01:16] Search complete! 15 relevant PM postings found.",
-    "[03:01:16]   Trust & Safety roles: 7",
-    "[03:01:16]   Senior-level roles:   7"
+    "[03:08:43] Target companies: Block (Cash App), Airbnb, Coinbase, Zillow, Pinterest, Reddit, Oura, OpenAI, Anthropic, Anduril",
+    "[03:08:43] Seniority filters: lead, staff, senior staff, director, senior director, principal, group, head of, vp",
+    "[03:08:43] Priority domain: Trust & Safety",
+    "[03:08:43] Mode: CACHED\n",
+    "[03:08:43] Loading curated job snapshot (Jan 2026)...",
+    "[03:08:43]   -> 20 verified postings loaded",
+    "[03:08:43] \n============================================================",
+    "[03:08:43] Search complete! 15 relevant PM postings found.",
+    "[03:08:43]   Trust & Safety roles: 7",
+    "[03:08:43]   Senior-level roles:   7"
   ]
 }
