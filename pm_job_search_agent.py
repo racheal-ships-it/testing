@@ -98,10 +98,43 @@ class JobPosting:
     relevance_score: float = 0.0
     source: str = ""
     date_posted: str = ""
+    is_live: bool = True  # False if job is likely expired (>90 days old)
     date_found: str = field(default_factory=lambda: datetime.now().strftime("%Y-%m-%d"))
 
     def to_dict(self):
         return asdict(self)
+
+
+# ---------------------------------------------------------------------------
+# Freshness check
+# ---------------------------------------------------------------------------
+
+MAX_AGE_DAYS = 90  # Jobs older than this are considered expired
+
+
+def check_job_freshness(job: JobPosting) -> bool:
+    """Check if job is likely still live based on date_posted. Returns True if live."""
+    if not job.date_posted:
+        return True  # Assume live if no date
+
+    try:
+        # Parse "Mon YYYY" format (e.g., "Jan 2026")
+        posted = datetime.strptime(job.date_posted, "%b %Y")
+        age_days = (datetime.now() - posted).days
+        return age_days <= MAX_AGE_DAYS
+    except ValueError:
+        return True  # Assume live if unparseable
+
+
+def days_since_posted(job: JobPosting) -> int:
+    """Return days since job was posted, or -1 if unknown."""
+    if not job.date_posted:
+        return -1
+    try:
+        posted = datetime.strptime(job.date_posted, "%b %Y")
+        return (datetime.now() - posted).days
+    except ValueError:
+        return -1
 
 
 # ---------------------------------------------------------------------------
@@ -512,7 +545,8 @@ def _curated_jobs() -> list[JobPosting]:
             date_posted=r.get("date_posted", ""),
         )
         posting.relevance_score = compute_relevance(posting)
-        if posting.relevance_score > 0:
+        posting.is_live = check_job_freshness(posting)
+        if posting.relevance_score > 0 and posting.is_live:
             jobs.append(posting)
     return jobs
 
@@ -569,15 +603,25 @@ def _fetch_greenhouse(board_token: str, company_name: str) -> list[JobPosting]:
         return []
     jobs = []
     for item in resp.json().get("jobs", []):
+        # Parse updated_at timestamp from Greenhouse
+        date_posted = ""
+        if updated := item.get("updated_at"):
+            try:
+                dt = datetime.fromisoformat(updated.replace("Z", "+00:00"))
+                date_posted = dt.strftime("%b %Y")
+            except (ValueError, AttributeError):
+                pass
         posting = JobPosting(
             title=item.get("title", ""),
             company=company_name,
             location=item.get("location", {}).get("name", ""),
             url=item.get("absolute_url", ""),
             source="greenhouse",
+            date_posted=date_posted,
         )
         posting.relevance_score = compute_relevance(posting)
-        if posting.relevance_score > 0:
+        posting.is_live = check_job_freshness(posting)
+        if posting.relevance_score > 0 and posting.is_live:
             jobs.append(posting)
     return jobs
 
@@ -589,6 +633,14 @@ def _fetch_lever(slug: str, company_name: str) -> list[JobPosting]:
         return []
     jobs = []
     for item in resp.json():
+        # Parse createdAt timestamp (epoch ms) from Lever
+        date_posted = ""
+        if created := item.get("createdAt"):
+            try:
+                dt = datetime.fromtimestamp(created / 1000)
+                date_posted = dt.strftime("%b %Y")
+            except (ValueError, TypeError, OSError):
+                pass
         posting = JobPosting(
             title=item.get("text", ""),
             company=company_name,
@@ -596,9 +648,11 @@ def _fetch_lever(slug: str, company_name: str) -> list[JobPosting]:
             url=item.get("hostedUrl", ""),
             description=(item.get("descriptionPlain", "") or "")[:500],
             source="lever",
+            date_posted=date_posted,
         )
         posting.relevance_score = compute_relevance(posting)
-        if posting.relevance_score > 0:
+        posting.is_live = check_job_freshness(posting)
+        if posting.relevance_score > 0 and posting.is_live:
             jobs.append(posting)
     return jobs
 
@@ -610,15 +664,25 @@ def _fetch_ashby(slug: str, company_name: str) -> list[JobPosting]:
         return []
     jobs = []
     for item in resp.json().get("jobs", []):
+        # Parse publishedDate from Ashby
+        date_posted = ""
+        if published := item.get("publishedDate"):
+            try:
+                dt = datetime.fromisoformat(published.replace("Z", "+00:00"))
+                date_posted = dt.strftime("%b %Y")
+            except (ValueError, AttributeError):
+                pass
         posting = JobPosting(
             title=item.get("title", ""),
             company=company_name,
             location=item.get("location", ""),
             url=item.get("jobUrl", "") or item.get("applicationUrl", ""),
             source="ashby",
+            date_posted=date_posted,
         )
         posting.relevance_score = compute_relevance(posting)
-        if posting.relevance_score > 0:
+        posting.is_live = check_job_freshness(posting)
+        if posting.relevance_score > 0 and posting.is_live:
             jobs.append(posting)
     return jobs
 

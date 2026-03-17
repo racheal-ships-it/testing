@@ -1,6 +1,6 @@
 {
-  "search_date": "2026-03-17T02:54:05.208928",
-  "total_results": 30,
+  "search_date": "2026-03-17T03:01:16.726972",
+  "total_results": 15,
   "jobs": [
     {
       "title": "Sr. Director, Product Policy - Trust & Safety",
@@ -13,6 +13,7 @@
       "relevance_score": 100.0,
       "source": "careers page",
       "date_posted": "Jan 2026",
+      "is_live": true,
       "date_found": "2026-03-17"
     },
     {
@@ -26,6 +27,7 @@
       "relevance_score": 100.0,
       "source": "careers page",
       "date_posted": "Jan 2026",
+      "is_live": true,
       "date_found": "2026-03-17"
     },
     {
@@ -39,6 +41,7 @@
       "relevance_score": 100.0,
       "source": "careers page",
       "date_posted": "Jan 2026",
+      "is_live": true,
       "date_found": "2026-03-17"
     },
     {
@@ -52,6 +55,7 @@
       "relevance_score": 75.0,
       "source": "careers page",
       "date_posted": "Jan 2026",
+      "is_live": true,
       "date_found": "2026-03-17"
     },
     {
@@ -65,19 +69,7 @@
       "relevance_score": 75.0,
       "source": "careers page",
       "date_posted": "Jan 2026",
-      "date_found": "2026-03-17"
-    },
-    {
-      "title": "Product Manager, Model Behavior",
-      "company": "OpenAI",
-      "location": "San Francisco, CA",
-      "url": "https://openai.com/careers/product-manager-model-behavior-san-francisco/",
-      "description": "Product manager for model behavior, safety alignment and policy",
-      "seniority": "",
-      "is_trust_safety": true,
-      "relevance_score": 75.0,
-      "source": "careers page",
-      "date_posted": "Dec 2025",
+      "is_live": true,
       "date_found": "2026-03-17"
     },
     {
@@ -91,45 +83,7 @@
       "relevance_score": 75.0,
       "source": "careers page",
       "date_posted": "Jan 2026",
-      "date_found": "2026-03-17"
-    },
-    {
-      "title": "Senior Product Manager, Identity & Access",
-      "company": "Coinbase",
-      "location": "Remote (USA)",
-      "url": "https://www.coinbase.com/careers/positions/6951278",
-      "description": "Senior PM for identity and access management, fraud prevention and compliance",
-      "seniority": "",
-      "is_trust_safety": true,
-      "relevance_score": 75.0,
-      "source": "careers page",
-      "date_posted": "Nov 2025",
-      "date_found": "2026-03-17"
-    },
-    {
-      "title": "Senior Product Manager, Trust & Safety, Integrity & Fraud",
-      "company": "DoorDash",
-      "location": "United States",
-      "url": "https://careersatdoordash.com/jobs/senior-product-manager-trust-safety-integrity-and-fraud/7071290/",
-      "description": "Senior PM for trust and safety integrity and fraud prevention at DoorDash",
-      "seniority": "",
-      "is_trust_safety": true,
-      "relevance_score": 75.0,
-      "source": "careers page",
-      "date_posted": "Dec 2025",
-      "date_found": "2026-03-17"
-    },
-    {
-      "title": "Trust & Safety User Reporting Product Manager",
-      "company": "Apple",
-      "location": "United States",
-      "url": "https://jobs.apple.com/en-us/details/200613587/trust-safety-user-reporting-product-manager",
-      "description": "Product manager for trust and safety user reporting at Apple",
-      "seniority": "",
-      "is_trust_safety": true,
-      "relevance_score": 75.0,
-      "source": "careers page",
-      "date_posted": "Dec 2025",
+      "is_live": true,
       "date_found": "2026-03-17"
     },
     {
@@ -143,6 +97,7 @@
       "relevance_score": 75.0,
       "source": "careers page",
       "date_posted": "Jan 2026",
+      "is_live": true,
       "date_found": "2026-03-17"
     },
     {
@@ -156,45 +111,7 @@
       "relevance_score": 70.0,
       "source": "greenhouse",
       "date_posted": "Jan 2026",
-      "date_found": "2026-03-17"
-    },
-    {
-      "title": "Principal Product Manager, Ads Manager (Monetization)",
-      "company": "Reddit",
-      "location": "Remote (US)",
-      "url": "https://job-boards.greenhouse.io/reddit/jobs/6762983",
-      "description": "Principal product manager for Reddit ads monetization platform",
-      "seniority": "Principal",
-      "is_trust_safety": false,
-      "relevance_score": 70.0,
-      "source": "greenhouse",
-      "date_posted": "Dec 2025",
-      "date_found": "2026-03-17"
-    },
-    {
-      "title": "Staff Product Manager, Reddit Answers",
-      "company": "Reddit",
-      "location": "Remote (US)",
-      "url": "https://job-boards.greenhouse.io/reddit/jobs/6721235",
-      "description": "Staff product manager for Reddit Answers AI product",
-      "seniority": "Staff",
-      "is_trust_safety": false,
-      "relevance_score": 70.0,
-      "source": "greenhouse",
-      "date_posted": "Dec 2025",
-      "date_found": "2026-03-17"
-    },
-    {
-      "title": "Principal Product Manager, Emerging Markets",
-      "company": "Reddit",
-      "location": "Remote (US)",
-      "url": "https://boards.greenhouse.io/reddit/jobs/4865277",
-      "description": "Principal product manager for emerging markets expansion at Reddit",
-      "seniority": "Principal",
-      "is_trust_safety": false,
-      "relevance_score": 70.0,
-      "source": "greenhouse",
-      "date_posted": "Nov 2025",
+      "is_live": true,
       "date_found": "2026-03-17"
     },
     {
@@ -208,6 +125,7 @@
       "relevance_score": 70.0,
       "source": "careers page",
       "date_posted": "Jan 2026",
+      "is_live": true,
       "date_found": "2026-03-17"
     },
     {
@@ -221,58 +139,7 @@
       "relevance_score": 70.0,
       "source": "careers page",
       "date_posted": "Jan 2026",
-      "date_found": "2026-03-17"
-    },
-    {
-      "title": "Staff Product Manager, Trends & Insights",
-      "company": "Pinterest",
-      "location": "San Francisco, CA",
-      "url": "https://www.pinterestcareers.com/jobs/7169624/staff-product-manager-trends-insights/",
-      "description": "Staff product manager for trends and insights product at Pinterest",
-      "seniority": "Staff",
-      "is_trust_safety": false,
-      "relevance_score": 70.0,
-      "source": "careers page",
-      "date_posted": "Oct 2025",
-      "date_found": "2026-03-17"
-    },
-    {
-      "title": "Staff Product Manager, AI/ML Personalization",
-      "company": "Pinterest",
-      "location": "San Francisco, CA",
-      "url": "https://www.pinterestcareers.com/jobs/6576120/staff-product-manager-aiml-personalization/",
-      "description": "Staff product manager for AI and ML personalization at Pinterest",
-      "seniority": "Staff",
-      "is_trust_safety": false,
-      "relevance_score": 70.0,
-      "source": "careers page",
-      "date_posted": "Aug 2025",
-      "date_found": "2026-03-17"
-    },
-    {
-      "title": "Corporate Strategy Lead - Product",
-      "company": "Pinterest",
-      "location": "New York, NY / San Francisco, CA",
-      "url": "https://www.pinterestcareers.com/jobs/7225068/corporate-strategy-lead-product/",
-      "description": "Lead for corporate product strategy at Pinterest",
-      "seniority": "Lead",
-      "is_trust_safety": false,
-      "relevance_score": 70.0,
-      "source": "careers page",
-      "date_posted": "Nov 2025",
-      "date_found": "2026-03-17"
-    },
-    {
-      "title": "Group Product Manager, Support Automation",
-      "company": "Coinbase",
-      "location": "Remote (USA)",
-      "url": "https://www.coinbase.com/careers/positions/6730364",
-      "description": "Group product manager for customer support automation at Coinbase",
-      "seniority": "Group",
-      "is_trust_safety": false,
-      "relevance_score": 70.0,
-      "source": "careers page",
-      "date_posted": "Dec 2025",
+      "is_live": true,
       "date_found": "2026-03-17"
     },
     {
@@ -286,19 +153,7 @@
       "relevance_score": 70.0,
       "source": "careers page",
       "date_posted": "Jan 2026",
-      "date_found": "2026-03-17"
-    },
-    {
-      "title": "Senior Product Manager, Consumer Trading (Advanced)",
-      "company": "Coinbase",
-      "location": "Remote (USA)",
-      "url": "https://www.coinbase.com/careers/positions/6563927",
-      "description": "Senior product manager for advanced consumer trading at Coinbase",
-      "seniority": "",
-      "is_trust_safety": false,
-      "relevance_score": 45.0,
-      "source": "careers page",
-      "date_posted": "Sep 2025",
+      "is_live": true,
       "date_found": "2026-03-17"
     },
     {
@@ -312,19 +167,7 @@
       "relevance_score": 45.0,
       "source": "careers page",
       "date_posted": "Jan 2026",
-      "date_found": "2026-03-17"
-    },
-    {
-      "title": "Product Manager II, Core Infrastructure",
-      "company": "Coinbase",
-      "location": "Remote (USA)",
-      "url": "https://www.coinbase.com/careers/positions/5957003",
-      "description": "Product manager for core infrastructure at Coinbase",
-      "seniority": "",
-      "is_trust_safety": false,
-      "relevance_score": 45.0,
-      "source": "careers page",
-      "date_posted": "Jun 2025",
+      "is_live": true,
       "date_found": "2026-03-17"
     },
     {
@@ -338,32 +181,7 @@
       "relevance_score": 45.0,
       "source": "careers page",
       "date_posted": "Jan 2026",
-      "date_found": "2026-03-17"
-    },
-    {
-      "title": "Product Manager, Codex",
-      "company": "OpenAI",
-      "location": "San Francisco, CA",
-      "url": "https://openai.com/careers/product-manager-codex-san-francisco/",
-      "description": "Product manager for Codex coding assistant at OpenAI",
-      "seniority": "",
-      "is_trust_safety": false,
-      "relevance_score": 45.0,
-      "source": "careers page",
-      "date_posted": "Dec 2025",
-      "date_found": "2026-03-17"
-    },
-    {
-      "title": "Product Manager, Enterprise Identity",
-      "company": "OpenAI",
-      "location": "San Francisco, CA",
-      "url": "https://openai.com/careers/product-manager-enterprise-identity-san-francisco/",
-      "description": "Product manager for enterprise identity and access at OpenAI",
-      "seniority": "",
-      "is_trust_safety": false,
-      "relevance_score": 45.0,
-      "source": "careers page",
-      "date_posted": "Dec 2025",
+      "is_live": true,
       "date_found": "2026-03-17"
     },
     {
@@ -377,6 +195,7 @@
       "relevance_score": 45.0,
       "source": "careers page",
       "date_posted": "Jan 2026",
+      "is_live": true,
       "date_found": "2026-03-17"
     },
     {
@@ -390,19 +209,20 @@
       "relevance_score": 45.0,
       "source": "careers page",
       "date_posted": "Jan 2026",
+      "is_live": true,
       "date_found": "2026-03-17"
     }
   ],
   "search_log": [
-    "[02:54:05] Target companies: Block (Cash App), Airbnb, Coinbase, Zillow, Pinterest, Reddit, Oura, OpenAI, Anthropic, Anduril",
-    "[02:54:05] Seniority filters: lead, staff, senior staff, director, senior director, principal, group, head of, vp",
-    "[02:54:05] Priority domain: Trust & Safety",
-    "[02:54:05] Mode: CACHED\n",
-    "[02:54:05] Loading curated job snapshot (Jan 2026)...",
-    "[02:54:05]   -> 37 verified postings loaded",
-    "[02:54:05] \n============================================================",
-    "[02:54:05] Search complete! 30 relevant PM postings found.",
-    "[02:54:05]   Trust & Safety roles: 11",
-    "[02:54:05]   Senior-level roles:   14"
+    "[03:01:16] Target companies: Block (Cash App), Airbnb, Coinbase, Zillow, Pinterest, Reddit, Oura, OpenAI, Anthropic, Anduril",
+    "[03:01:16] Seniority filters: lead, staff, senior staff, director, senior director, principal, group, head of, vp",
+    "[03:01:16] Priority domain: Trust & Safety",
+    "[03:01:16] Mode: CACHED\n",
+    "[03:01:16] Loading curated job snapshot (Jan 2026)...",
+    "[03:01:16]   -> 20 verified postings loaded",
+    "[03:01:16] \n============================================================",
+    "[03:01:16] Search complete! 15 relevant PM postings found.",
+    "[03:01:16]   Trust & Safety roles: 7",
+    "[03:01:16]   Senior-level roles:   7"
   ]
 }
