@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trending Picks — Bestsellers Storefront</title>
+<style>
+  :root {
+    --bg: #f7f7f8;
+    --surface: #ffffff;
+    --ink: #14151a;
+    --muted: #6b7280;
+    --border: #e7e7ea;
+    --accent: #0f6b4c;
+    --accent-ink: #ffffff;
+    --badge: #d64545;
+    --radius: 14px;
+    --shadow: 0 1px 2px rgba(0,0,0,.04), 0 8px 24px rgba(0,0,0,.06);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+  }
+
+  /* ---------- Header ---------- */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .header-inner {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .logo {
+    font-weight: 800;
+    font-size: 1.25rem;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+  }
+  .logo span { color: var(--accent); }
+  .search-wrap {
+    flex: 1;
+    display: flex;
+    max-width: 480px;
+  }
+  .search-wrap input {
+    flex: 1;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 0.95rem;
+    outline: none;
+  }
+  .search-wrap input:focus { border-color: var(--accent); }
+  .header-actions {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .cart-btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--ink);
+    color: #fff;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .cart-count {
+    background: var(--badge);
+    color: #fff;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 1px 6px;
+    min-width: 18px;
+    text-align: center;
+  }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    max-width: 1180px;
+    margin: 28px auto 8px;
+    padding: 0 20px;
+  }
+  .hero h1 {
+    font-size: clamp(1.6rem, 3vw, 2.3rem);
+    margin: 0 0 6px;
+    letter-spacing: -0.02em;
+  }
+  .hero p {
+    color: var(--muted);
+    margin: 0;
+    max-width: 640px;
+    line-height: 1.5;
+  }
+  .disclosure {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 0.8rem;
+    color: var(--muted);
+    background: #f0f0f2;
+    border: 1px solid var(--border);
+    padding: 6px 10px;
+    border-radius: 8px;
+  }
+
+  /* ---------- Toolbar ---------- */
+  .toolbar {
+    max-width: 1180px;
+    margin: 20px auto 0;
+    padding: 0 20px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    justify-content: space-between;
+  }
+  .filters {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .chip {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    padding: 7px 14px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    color: var(--ink);
+  }
+  .chip.active {
+    background: var(--ink);
+    color: #fff;
+    border-color: var(--ink);
+  }
+  .sort-wrap select {
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    font-size: 0.85rem;
+  }
+
+  /* ---------- Product Grid ---------- */
+  .grid {
+    max-width: 1180px;
+    margin: 20px auto 60px;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 18px;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow);
+    transition: transform .15s ease;
+  }
+  .card:hover { transform: translateY(-2px); }
+  .thumb {
+    aspect-ratio: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3.2rem;
+    position: relative;
+  }
+  .rank-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: var(--badge);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 4px 8px;
+    border-radius: 999px;
+    letter-spacing: 0.02em;
+  }
+  .card-body {
+    padding: 14px 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+  }
+  .brand {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    font-weight: 700;
+  }
+  .name {
+    font-size: 0.98rem;
+    font-weight: 600;
+    line-height: 1.3;
+    min-height: 2.5em;
+  }
+  .meta-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  .stars { color: #e0a800; letter-spacing: -1px; }
+  .price-row {
+    margin-top: 4px;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .price { font-weight: 800; font-size: 1.05rem; }
+  .compare { color: var(--muted); text-decoration: line-through; font-size: 0.85rem; }
+  .sold-count { font-size: 0.75rem; color: var(--muted); }
+  .add-btn {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    background: var(--accent);
+    color: var(--accent-ink);
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+  .add-btn.added { background: #1f7a1f; }
+
+  /* ---------- Cart Drawer ---------- */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.35);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s ease;
+    z-index: 30;
+  }
+  .overlay.open { opacity: 1; pointer-events: auto; }
+  .drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: min(400px, 100%);
+    background: #fff;
+    box-shadow: -8px 0 24px rgba(0,0,0,.12);
+    transform: translateX(100%);
+    transition: transform .25s ease;
+    z-index: 31;
+    display: flex;
+    flex-direction: column;
+  }
+  .drawer.open { transform: translateX(0); }
+  .drawer-header {
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .drawer-header h2 { margin: 0; font-size: 1.1rem; }
+  .close-btn {
+    border: none;
+    background: none;
+    font-size: 1.3rem;
+    cursor: pointer;
+    color: var(--muted);
+    line-height: 1;
+  }
+  .drawer-items {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 20px;
+  }
+  .empty-cart {
+    color: var(--muted);
+    text-align: center;
+    margin-top: 60px;
+    font-size: 0.9rem;
+  }
+  .line-item {
+    display: flex;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .line-thumb {
+    width: 56px;
+    height: 56px;
+    border-radius: 8px;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    flex-shrink: 0;
+  }
+  .line-info { flex: 1; min-width: 0; }
+  .line-name { font-size: 0.88rem; font-weight: 600; }
+  .line-price { font-size: 0.82rem; color: var(--muted); margin-top: 2px; }
+  .qty-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .qty-btn {
+    width: 24px;
+    height: 24px;
+    border: 1px solid var(--border);
+    background: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    line-height: 1;
+  }
+  .remove-link {
+    margin-left: auto;
+    font-size: 0.78rem;
+    color: var(--muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+  .drawer-footer {
+    border-top: 1px solid var(--border);
+    padding: 16px 20px 20px;
+  }
+  .subtotal-row {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .checkout-btn {
+    width: 100%;
+    padding: 13px;
+    border: none;
+    border-radius: 10px;
+    background: var(--ink);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+  }
+  .drawer-note {
+    font-size: 0.72rem;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 10px;
+  }
+
+  /* ---------- Toast ---------- */
+  .toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--ink);
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    opacity: 0;
+    transition: all .25s ease;
+    z-index: 40;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  footer {
+    text-align: center;
+    padding: 30px 20px 50px;
+    color: var(--muted);
+    font-size: 0.8rem;
+  }
+
+  @media (max-width: 640px) {
+    .search-wrap { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo">Trending<span>Picks</span></div>
+    <div class="search-wrap">
+      <input id="searchInput" type="text" placeholder="Search bestsellers...">
+    </div>
+    <div class="header-actions">
+      <button class="cart-btn" id="cartBtn">
+        🛒 Cart <span class="cart-count" id="cartCount">0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <h1>10 Bestsellers From the Shopify Ecosystem</h1>
+  <p>A curated showcase of product categories that consistently top the charts across Shopify-powered brands — from apparel to beauty to home goods.</p>
+  <span class="disclosure">Demo storefront with sample data — not connected to a live Shopify store. Swap in the Storefront API to go live.</span>
+</section>
+
+<div class="toolbar">
+  <div class="filters" id="filters"></div>
+  <div class="sort-wrap">
+    <select id="sortSelect">
+      <option value="rank">Sort: Best Selling</option>
+      <option value="price-asc">Price: Low to High</option>
+      <option value="price-desc">Price: High to Low</option>
+      <option value="rating">Sort: Rating</option>
+    </select>
+  </div>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<div class="overlay" id="overlay"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-header">
+    <h2>Your Cart</h2>
+    <button class="close-btn" id="closeDrawer">&times;</button>
+  </div>
+  <div class="drawer-items" id="drawerItems"></div>
+  <div class="drawer-footer">
+    <div class="subtotal-row">
+      <span>Subtotal</span>
+      <span id="subtotal">$0.00</span>
+    </div>
+    <button class="checkout-btn" id="checkoutBtn">Checkout</button>
+    <div class="drawer-note">Demo checkout — no real payment is processed.</div>
+  </div>
+</aside>
+
+<div class="toast" id="toast"></div>
+
+<footer>Demo storefront for illustration purposes. Product data is curated, not live-scraped from Shopify.</footer>
+
+<script>
+  const PRODUCTS = [
+    { id: 'p1', rank: 1, brand: 'Category Leader', name: 'Insulated Steel Tumbler, 40oz', icon: '🥤', category: 'Home', price: 45, compareAt: 55, rating: 4.8, sold: '2M+ sold', color: '#cfe8ff' },
+    { id: 'p2', rank: 2, brand: 'Category Leader', name: 'Everyday Seamless Leggings', icon: '🩳', category: 'Apparel', price: 58, compareAt: null, rating: 4.7, sold: '850K+ sold', color: '#f4d9e4' },
+    { id: 'p3', rank: 3, brand: 'Category Leader', name: 'Matte Liquid Lipstick Set', icon: '💄', category: 'Beauty', price: 29, compareAt: 38, rating: 4.6, sold: '1.2M+ sold', color: '#ffe3ec' },
+    { id: 'p4', rank: 4, brand: 'Category Leader', name: 'Merino Wool Crew Socks (3-Pack)', icon: '🧦', category: 'Apparel', price: 24, compareAt: null, rating: 4.9, sold: '3M+ sold', color: '#e2f0d9' },
+    { id: 'p5', rank: 5, brand: 'Category Leader', name: 'Recycled Knit Everyday Sneakers', icon: '👟', category: 'Footwear', price: 98, compareAt: 120, rating: 4.5, sold: '600K+ sold', color: '#e6e6fa' },
+    { id: 'p6', rank: 6, brand: 'Category Leader', name: 'Cold Brew Coffee Concentrate, 32oz', icon: '☕', category: 'Food & Drink', price: 19, compareAt: null, rating: 4.7, sold: '400K+ sold', color: '#e8dcd0' },
+    { id: 'p7', rank: 7, brand: 'Category Leader', name: 'Linen Blend Sheet Set, Queen', icon: '🛏️', category: 'Home', price: 149, compareAt: 189, rating: 4.8, sold: '300K+ sold', color: '#fef3d0' },
+    { id: 'p8', rank: 8, brand: 'Category Leader', name: 'Vitamin C Brightening Serum', icon: '🧴', category: 'Beauty', price: 34, compareAt: null, rating: 4.6, sold: '700K+ sold', color: '#d9f2e6' },
+    { id: 'p9', rank: 9, brand: 'Category Leader', name: 'Compression Training Shorts', icon: '🩲', category: 'Apparel', price: 42, compareAt: 50, rating: 4.5, sold: '500K+ sold', color: '#d9e4f5' },
+    { id: 'p10', rank: 10, brand: 'Category Leader', name: 'Smart Ring Fitness Tracker', icon: '💍', category: 'Tech', price: 279, compareAt: 299, rating: 4.4, sold: '150K+ sold', color: '#eee0f7' },
+  ];
+
+  const CATEGORIES = ['All', ...Array.from(new Set(PRODUCTS.map(p => p.category)))];
+
+  let state = {
+    query: '',
+    category: 'All',
+    sort: 'rank',
+    cart: JSON.parse(localStorage.getItem('tp_cart') || '{}'),
+  };
+
+  const grid = document.getElementById('grid');
+  const filtersEl = document.getElementById('filters');
+  const searchInput = document.getElementById('searchInput');
+  const sortSelect = document.getElementById('sortSelect');
+  const cartCount = document.getElementById('cartCount');
+  const cartBtn = document.getElementById('cartBtn');
+  const drawer = document.getElementById('drawer');
+  const overlay = document.getElementById('overlay');
+  const closeDrawer = document.getElementById('closeDrawer');
+  const drawerItems = document.getElementById('drawerItems');
+  const subtotalEl = document.getElementById('subtotal');
+  const checkoutBtn = document.getElementById('checkoutBtn');
+  const toast = document.getElementById('toast');
+
+  function saveCart() {
+    localStorage.setItem('tp_cart', JSON.stringify(state.cart));
+  }
+
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => toast.classList.remove('show'), 1800);
+  }
+
+  function renderFilters() {
+    filtersEl.innerHTML = CATEGORIES.map(c =>
+      `<button class="chip ${c === state.category ? 'active' : ''}" data-cat="${c}">${c}</button>`
+    ).join('');
+    filtersEl.querySelectorAll('.chip').forEach(btn => {
+      btn.addEventListener('click', () => {
+        state.category = btn.dataset.cat;
+        renderFilters();
+        renderGrid();
+      });
+    });
+  }
+
+  function starString(rating) {
+    const full = Math.round(rating);
+    return '★'.repeat(full) + '☆'.repeat(5 - full);
+  }
+
+  function getFiltered() {
+    let items = PRODUCTS.filter(p => {
+      const matchCat = state.category === 'All' || p.category === state.category;
+      const matchQuery = p.name.toLowerCase().includes(state.query.toLowerCase()) ||
+                          p.category.toLowerCase().includes(state.query.toLowerCase());
+      return matchCat && matchQuery;
+    });
+    switch (state.sort) {
+      case 'price-asc': items.sort((a, b) => a.price - b.price); break;
+      case 'price-desc': items.sort((a, b) => b.price - a.price); break;
+      case 'rating': items.sort((a, b) => b.rating - a.rating); break;
+      default: items.sort((a, b) => a.rank - b.rank);
+    }
+    return items;
+  }
+
+  function renderGrid() {
+    const items = getFiltered();
+    if (!items.length) {
+      grid.innerHTML = `<p style="grid-column:1/-1;color:var(--muted);text-align:center;padding:40px 0;">No products match your search.</p>`;
+      return;
+    }
+    grid.innerHTML = items.map(p => `
+      <div class="card">
+        <div class="thumb" style="background:${p.color}">
+          <span class="rank-badge">#${p.rank} Bestseller</span>
+          ${p.icon}
+        </div>
+        <div class="card-body">
+          <div class="brand">${p.brand}</div>
+          <div class="name">${p.name}</div>
+          <div class="meta-row">
+            <span class="stars">${starString(p.rating)}</span>
+            <span>${p.rating}</span>
+          </div>
+          <div class="sold-count">${p.sold}</div>
+          <div class="price-row">
+            <span class="price">$${p.price.toFixed(2)}</span>
+            ${p.compareAt ? `<span class="compare">$${p.compareAt.toFixed(2)}</span>` : ''}
+          </div>
+          <button class="add-btn" data-id="${p.id}">Add to Cart</button>
+        </div>
+      </div>
+    `).join('');
+
+    grid.querySelectorAll('.add-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        addToCart(btn.dataset.id);
+        btn.textContent = 'Added ✓';
+        btn.classList.add('added');
+        setTimeout(() => {
+          btn.textContent = 'Add to Cart';
+          btn.classList.remove('added');
+        }, 1200);
+      });
+    });
+  }
+
+  function addToCart(id) {
+    state.cart[id] = (state.cart[id] || 0) + 1;
+    saveCart();
+    renderCart();
+    const product = PRODUCTS.find(p => p.id === id);
+    showToast(`${product.name} added to cart`);
+  }
+
+  function changeQty(id, delta) {
+    if (!state.cart[id]) return;
+    state.cart[id] += delta;
+    if (state.cart[id] <= 0) delete state.cart[id];
+    saveCart();
+    renderCart();
+  }
+
+  function removeItem(id) {
+    delete state.cart[id];
+    saveCart();
+    renderCart();
+  }
+
+  function renderCart() {
+    const entries = Object.entries(state.cart);
+    const totalQty = entries.reduce((sum, [, qty]) => sum + qty, 0);
+    cartCount.textContent = totalQty;
+
+    if (!entries.length) {
+      drawerItems.innerHTML = `<div class="empty-cart">Your cart is empty.</div>`;
+      subtotalEl.textContent = '$0.00';
+      return;
+    }
+
+    let subtotal = 0;
+    drawerItems.innerHTML = entries.map(([id, qty]) => {
+      const p = PRODUCTS.find(pr => pr.id === id);
+      subtotal += p.price * qty;
+      return `
+        <div class="line-item">
+          <div class="line-thumb" style="background:${p.color}">${p.icon}</div>
+          <div class="line-info">
+            <div class="line-name">${p.name}</div>
+            <div class="line-price">$${p.price.toFixed(2)}</div>
+            <div class="qty-row">
+              <button class="qty-btn" data-action="dec" data-id="${id}">-</button>
+              <span>${qty}</span>
+              <button class="qty-btn" data-action="inc" data-id="${id}">+</button>
+              <button class="remove-link" data-action="remove" data-id="${id}">Remove</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+    subtotalEl.textContent = `$${subtotal.toFixed(2)}`;
+
+    drawerItems.querySelectorAll('[data-action]').forEach(btn => {
+      const id = btn.dataset.id;
+      const action = btn.dataset.action;
+      btn.addEventListener('click', () => {
+        if (action === 'inc') changeQty(id, 1);
+        if (action === 'dec') changeQty(id, -1);
+        if (action === 'remove') removeItem(id);
+      });
+    });
+  }
+
+  function openDrawer() {
+    drawer.classList.add('open');
+    overlay.classList.add('open');
+  }
+  function closeDrawerFn() {
+    drawer.classList.remove('open');
+    overlay.classList.remove('open');
+  }
+
+  cartBtn.addEventListener('click', openDrawer);
+  closeDrawer.addEventListener('click', closeDrawerFn);
+  overlay.addEventListener('click', closeDrawerFn);
+  checkoutBtn.addEventListener('click', () => {
+    if (!Object.keys(state.cart).length) {
+      showToast('Your cart is empty');
+      return;
+    }
+    showToast('This is a demo — no real checkout is processed.');
+  });
+
+  searchInput.addEventListener('input', (e) => {
+    state.query = e.target.value;
+    renderGrid();
+  });
+
+  sortSelect.addEventListener('change', (e) => {
+    state.sort = e.target.value;
+    renderGrid();
+  });
+
+  renderFilters();
+  renderGrid();
+  renderCart();
+</script>
+
+</body>
+</html>
